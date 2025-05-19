@@ -26,9 +26,11 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { authClient } from "@/lib/auth-client"
 import { GitHubIcon, GoogleIcon } from "@daveyplate/better-auth-ui"; // Assuming these exist
+import { useAdminStatus } from "@/hooks/use-auth-hooks"
 
 export default function GetStartedPage() {
   const router = useRouter()
+  const { isAdmin } = useAdminStatus();
   const [loading, setLoading] = useState<string | null>(null) // 'anonymous', 'social', 'email'
   const [error, setError] = useState<string | null>(null)
 
@@ -40,6 +42,14 @@ export default function GetStartedPage() {
   const [emailName, setEmailName] = useState("") // Add state for email signup name
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+
+  if (!isAdmin) {
+    return (
+      <main className="flex min-h-full items-center justify-center">
+        <div className="text-center text-lg text-muted-foreground">You do not have access to this page.</div>
+      </main>
+    );
+  }
 
   const handleAnonymousSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

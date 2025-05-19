@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { ThreadList } from "@/components/assistant-ui/thread-list"
+import { ThreadList } from "./assistant-ui/thread-list"
 import { TooltipIconButton } from "./assistant-ui/tooltip-icon-button"
 import { useEffect } from "react"
 

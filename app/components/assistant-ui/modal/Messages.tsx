@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Thread } from "@/components/assistant-ui/thread";
+import { Thread } from "../thread";
 import { FileReadToolUI } from "../tools/FileReadToolUi";
 
 export const Messages: FC = () => {

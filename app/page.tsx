@@ -31,16 +31,16 @@ export default async function Home() {
                     {session ? (
                         <Link
                             className="flex h-10 items-center justify-center gap-2 rounded-full border border-transparent border-solid bg-foreground px-4 text-background text-sm transition-colors hover:bg-[#383838] sm:h-12 sm:px-5 sm:text-base dark:hover:bg-[#ccc]"
-                            href="/dashboard"
+                            href="/plan"
                         >
-                            Go to Dashboard
+                            Go to Plan
                         </Link>
                     ) : (
                         <Link
                             className="flex h-10 items-center justify-center gap-2 rounded-full border border-transparent border-solid bg-foreground px-4 text-background text-sm transition-colors hover:bg-[#383838] sm:h-12 sm:px-5 sm:text-base dark:hover:bg-[#ccc]"
-                            href="/auth/sign-in"
+                            href="/pricing"
                         >
-                            Sign In
+                            View Pricing
                         </Link>
                     )}
                     <a

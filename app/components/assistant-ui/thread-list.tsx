@@ -7,7 +7,7 @@ import { PlusIcon, Trash2Icon, SearchIcon, XIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useChat } from "@/contexts/ChatContext";
+import { useChat } from "../../contexts/ChatContext";
 import { useEffect, useState } from "react";
 import {
   Dialog,

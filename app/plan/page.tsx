@@ -1,7 +1,10 @@
-import { AppSidebar, SIDEBAR_VISIBLE_PARAM, DEFAULT_SIDEBAR_VISIBILITY } from "@/components/app-sidebar";
-import { AssistantModal } from "@/components/assistant-ui/assistant-modal";
+"use client"
+
+import { AppSidebar, SIDEBAR_VISIBLE_PARAM, DEFAULT_SIDEBAR_VISIBILITY } from "@/app/components/app-sidebar";
+import { AssistantModal } from "@/app/components/assistant-ui/assistant-modal";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useState, useEffect } from "react";
+import { ChatProvider } from "../contexts/ChatContext";
 
 export function VibeOps() {
   const [showHistory, setShowHistory] = useState(DEFAULT_SIDEBAR_VISIBILITY);
@@ -27,12 +30,15 @@ export function VibeOps() {
   };
 
   return (
+    <ChatProvider>
     <div className="flex h-screen w-full bg-muted/30">
       {showHistory && (
         <div className="w-64 border-r">
-          <SidebarProvider>
-            <AppSidebar onToggle={toggleHistory} />
-          </SidebarProvider>
+         
+            <SidebarProvider>
+              <AppSidebar onToggle={toggleHistory} />
+            </SidebarProvider>
+      
         </div>
       )}
       <div className="flex-1 relative">
@@ -42,5 +48,8 @@ export function VibeOps() {
         <AssistantModal onToggleHistory={toggleHistory} />
       </div>
     </div>
+    </ChatProvider>
   );
 }
+
+export default VibeOps;

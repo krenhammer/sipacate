@@ -105,9 +105,9 @@ export function Header() {
                             <Link href="/auth/sign-in">
                                 <Button variant="ghost" size="sm">Sign in</Button>
                             </Link>
-                            <Link href="/auth/get-started">
+                            {/* <Link href="/auth/get-started">
                                 <Button size="sm">Get Started</Button>
-                            </Link>
+                            </Link> */}
                         </>
                     )}
                 </div>

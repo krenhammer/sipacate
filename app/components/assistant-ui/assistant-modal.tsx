@@ -7,16 +7,16 @@ import { IoChatbox } from "react-icons/io5";
 import { type FC, forwardRef, useState, useEffect, useRef } from "react";
 import { AssistantModalPrimitive, ThreadPrimitive } from "@assistant-ui/react";
 
-import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
+import { TooltipIconButton } from "./tooltip-icon-button";
 
-import { AgentSelector } from "@/components/agent-selector";
-import { useChat } from "@/contexts/ChatContext";
+// import { AgentSelector } from "@/components/agent-selector";
+import { useChat } from "../../contexts/ChatContext";
 import { ViewContainer } from "./modal/ViewContainer";
 import { DEFAULT_VIEW, ModalViewType, VIEW_PARAM, OPEN_PARAM } from "./modal/types";
-import { useNavigate } from "@/router";
+// import { useNavigate } from "@/router";
 import { SIDEBAR_VISIBLE_PARAM, DEFAULT_SIDEBAR_VISIBILITY } from "../app-sidebar";
-import { projectFolders } from "@/lib/projectFolders";
-import { onProjectFolderChanged } from "@/lib/events";
+// import { projectFolders } from "@/lib/projectFolders";
+// import { onProjectFolderChanged } from "@/lib/events";
 
 // Default modal visibility
 export const DEFAULT_MODAL_VISIBILITY = false;
@@ -67,33 +67,11 @@ export const AssistantModal: FC<AssistantModalProps> = ({ onToggleHistory }) => 
   const { currentThreadId, isLoading, createNewThread } = useChat();
   const [activeView, setActiveView] = useState<ModalViewType>(DEFAULT_VIEW);
   const [shouldOpen, setShouldOpen] = useState(DEFAULT_MODAL_VISIBILITY);
-  const [hasProjectFolder, setHasProjectFolder] = useState(false);
-  const [currentProjectPath, setCurrentProjectPath] = useState<string | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const hasRunInitialCheckRef = useRef(false);
   const intervalRef = useRef<number | null>(null);
   
-  // Check if a project folder exists
-  const checkProjectFolder = async () => {
-    try {
-      const currentFolder = await projectFolders.getCurrentFolder();
-      const folderExists = !!currentFolder;
-      
-      // Only update state if it changed to avoid re-renders
-      if (folderExists !== hasProjectFolder) {
-        setHasProjectFolder(folderExists);
-      }
-      
-      // Update current project path
-      if (currentFolder) {
-        setCurrentProjectPath(currentFolder.path);
-      } else {
-        setCurrentProjectPath(null);
-      }
-    } catch (error) {
-      console.error("Error checking project folder:", error);
-    }
-  };
+  
 
   // Make function available globally for debugging, but don't re-create it on every render
   useEffect(() => {
@@ -106,13 +84,6 @@ export const AssistantModal: FC<AssistantModalProps> = ({ onToggleHistory }) => 
     };
   }, []);
   
-  // Run a manual check once on initial render
-  useEffect(() => {
-    if (!hasRunInitialCheckRef.current) {
-      checkProjectFolder();
-      hasRunInitialCheckRef.current = true;
-    }
-  }, []);
 
   // Effect to handle URL parameters for view type and modal open state
   useEffect(() => {
@@ -138,28 +109,7 @@ export const AssistantModal: FC<AssistantModalProps> = ({ onToggleHistory }) => 
     }
   }, []);
 
-  // Effect to check for project folder changes
-  useEffect(() => {
-    // Listen for project folder changes using our custom event
-    const unsubscribe = onProjectFolderChanged(() => {
-      checkProjectFolder();
-    });
-
-    // Set up interval check but prevent multiple intervals
-    if (!intervalRef.current) {
-      intervalRef.current = window.setInterval(() => {
-        checkProjectFolder();
-      }, 5000);
-    }
-
-    return () => {
-      unsubscribe();
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, []);
+  
 
   // Helper to validate view type
   const isValidViewType = (view: string): boolean => {
@@ -262,7 +212,7 @@ export const AssistantModal: FC<AssistantModalProps> = ({ onToggleHistory }) => 
       >
         {activeView === 'messages' && (
           <div className="m-2 shrink-0 flex items-center gap-2">
-            <div className="flex-grow"><AgentSelector/></div>
+            <div className="flex-grow"></div>
             <TooltipIconButton
               tooltip={getSidebarVisibility() ? "Hide History" : "Show History"}
               onClick={handleToggleHistory}
@@ -285,18 +235,6 @@ export const AssistantModal: FC<AssistantModalProps> = ({ onToggleHistory }) => 
         </div>
         
         <div className="border-t p-2 flex space-x-2">
-         
-          
-          <TooltipIconButton
-            // tooltip={currentProjectPath ? `Project: ${currentProjectPath}` : "Select a Project to begin"}
-            tooltip={currentProjectPath ? `Change Project` : "Select a Project to begin"}
-            onClick={() => handleViewChange('project')}
-            variant="ghost"
-            className={activeView === 'project' ? 'text-foreground' : 'text-muted-foreground opacity-50'}
-          >
-            <FaFolder className="size-5" />
-          </TooltipIconButton>
-          
          
           
           <TooltipIconButton
@@ -330,24 +268,12 @@ export const AssistantModal: FC<AssistantModalProps> = ({ onToggleHistory }) => 
             onClick={() => handleViewChange('messages')}
             variant="ghost"
             className={activeView === 'messages' ? 'text-foreground' : 'text-muted-foreground opacity-50'}
-            disabled={!hasProjectFolder}
-            data-test-has-project={hasProjectFolder ? "true" : "false"}
+            // disabled={!hasProjectFolder}
+            // data-test-has-project={hasProjectFolder ? "true" : "false"}
           >
             <IoChatbox className="size-5" />
           </TooltipIconButton>
           
-          {/* Project Path Display */}
-          <div className="ml-auto">
-            {currentProjectPath && (
-              <div 
-                className="mt-1 text-xs text-muted-foreground hover:text-foreground truncate max-w-[160px] cursor-pointer flex items-center justify-end"
-                onClick={() => handleViewChange('project')}
-                title={`Current Project: ${currentProjectPath}`}
-              >
-                <span className="truncate">{currentProjectPath}</span>
-              </div>
-            )}
-          </div>
         </div>
       </AssistantModalPrimitive.Content>
     </AssistantModalPrimitive.Root>

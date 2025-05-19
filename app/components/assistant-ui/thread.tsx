@@ -19,20 +19,20 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAgent } from "@/contexts/AgentContext";
-import { useChat } from "@/contexts/ChatContext";
+// import { useAgent } from "../../contexts/AgentContext";
+import { useChat } from "../../contexts/ChatContext";
 import { useRef, useState, useEffect } from "react";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import { MarkdownText } from "@/components/assistant-ui/markdown-text";
-import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
+import { MarkdownText } from "./markdown-text";
+import { TooltipIconButton } from "./tooltip-icon-button";
 import { 
   ComposerAttachments, 
   ComposerAddAttachment, 
   UserMessageAttachments, 
   // AssistantMessageAttachments 
-} from "@/components/assistant-ui/attachment";
+} from "./attachment";
 
 // Define types for attachments to help TypeScript understand the structure
 type Attachment = {
@@ -43,7 +43,8 @@ type Attachment = {
 };
 
 export const Thread: FC = () => {
-  const { isAgentSelected } = useAgent();
+  // const { isAgentSelected } = useAgent();
+  const isAgentSelected  = true;
   const { currentThreadId } = useChat();
 
   if (!currentThreadId) {
@@ -96,7 +97,8 @@ const ThreadScrollToBottom: FC = () => {
 };
 
 const ThreadWelcome: FC = () => {
-  const { isAgentSelected } = useAgent();
+  // const { isAgentSelected } = useAgent();
+  const isAgentSelected  = true;
   const { currentThreadId } = useChat();
 
   return (
@@ -104,9 +106,10 @@ const ThreadWelcome: FC = () => {
       <div className="flex w-full max-w-[var(--thread-max-width)] flex-grow flex-col">
         <div className="flex w-full flex-grow flex-col items-center justify-center">
           <p className="mt-4 font-medium">
-            {!isAgentSelected 
-              ? "Please select an agent to start the conversation."
-              : "How can I help you today?"}
+            {/* {!isAgentSelected 
+              ? "Please select an agent to start the conversation.": "How can I help you today?"
+              } */}
+              "How can I help you today?"
           </p>
         </div>
       </div>
@@ -115,7 +118,8 @@ const ThreadWelcome: FC = () => {
 };
 
 const Composer: FC = () => {
-  const { isAgentSelected } = useAgent();
+  // const { isAgentSelected } = useAgent();
+  const  isAgentSelected  = true;
   const { currentThreadId,  } = useChat();
 
   return (
@@ -143,9 +147,10 @@ const Composer: FC = () => {
 };
 
 const ComposerAction: FC = () => {
-  const { isAgentSelected } = useAgent();
+  // const { isAgentSelected } = useAgent();
   const { currentThreadId } = useChat();
-  const isDisabled = !isAgentSelected || !currentThreadId;
+  // const isDisabled = !isAgentSelected || !currentThreadId;
+  const isDisabled = !currentThreadId;
 
   return (
     <>
