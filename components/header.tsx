@@ -75,14 +75,7 @@ export function Header() {
                             </>
                         )}
                     </nav>
-                    <Link
-                        href="https://github.com/daveyplate/better-auth-nextjs-starter"
-                        target="_blank"
-                    >
-                        <Button variant="outline" size="icon" className="size-8 rounded-full">
-                            <GitHubIcon />
-                        </Button>
-                    </Link>
+                    
 
                     <ModeToggle />
                     {session?.user ? (
