@@ -62,9 +62,9 @@ export function Header() {
                                         <Link href="/api-keys" className="text-sm font-medium">
                                             API Keys
                                         </Link>
-                                        <Link href="/api-docs" className="text-sm font-medium">
+                                        {/* <Link href="/api-docs" className="text-sm font-medium">
                                             API Docs
-                                        </Link>
+                                        </Link> */}
                                     </>
                                 )}
                                 {isAdmin && (
