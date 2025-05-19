@@ -1,0 +1,14 @@
+name = "better-auth-nextjs-starter"
+compatibility_date = "2024-11-11"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+
+[dev]
+port = 3000
+local_protocol = "http"
+
+
+# WARNING: When running a production build locally using Wrangler, be aware that the .env file may be omitted. Therefore, ensure that you have the same environment variables in your wrangler.toml file.
+# However, you don't have to include Drizzle environment unless you want to access `drizzle-kit` commands in the deployed code.
+[vars]

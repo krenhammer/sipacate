@@ -1,0 +1,40 @@
+name = "better-auth-nextjs-starter"
+compatibility_date = "2024-01-01" # Update this to a recent date
+
+# Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+account_id = "b4205c60a57637ac78124487c2eef3ae"
+
+main = "src/server.ts"
+
+# Indicate this is a Pages project
+workers_dev = false
+
+[build]
+command = "pnpm next:build"
+output_dir = ".next"
+cwd = "."
+
+[dev]
+port = 3000
+local_protocol = "http"
+
+[site]
+bucket = ".next"
+entry-point = "src/server.ts"
+
+# D1 database configuration
+[[d1_databases]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "DB-prod"
+database_id = "d8f64416-0324-49dd-841f-4e2edcddbfba" # Remote DB ID from .env
+preview_database_id = "DB-preview" # Optional: A separate DB for wrangler dev --remote / git branches
+
+# Local development configuration
+[env.dev]
+# Create a local DB for wrangler dev (local mode)
+# You can use `wrangler d1 create DB-dev` and then add the ID here
+# or wrangler dev will create one for you.
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "DB-local"
+database_id = "" # Will be created automatically by wrangler dev on first run or use `wrangler d1 create DB-local` 

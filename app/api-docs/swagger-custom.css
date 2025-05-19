@@ -1,0 +1,420 @@
+/* Super aggressive styling overrides for Swagger UI */
+
+/* Target the main container that wraps the entire UI */
+.swagger-ui {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Target the information container */
+.swagger-ui .info {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Target the scheme-container - this is the main white box with servers */
+.swagger-ui .scheme-container {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #333 !important;
+  border-radius: 5px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6) !important;
+  margin: 20px 0 !important;
+  padding: 16px !important;
+}
+
+/* Target the servers container */
+.swagger-ui .servers {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Target the servers title */
+.swagger-ui .servers-title,
+.servers-title {
+  color: #ffffff !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+}
+
+/* Target the servers label */
+.swagger-ui .servers > label,
+.servers > label {
+  color: #ffffff !important;
+}
+
+/* Target the servers select dropdown */
+.swagger-ui .servers > label select,
+.swagger-ui select,
+.servers select,
+select {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid #333 !important;
+  box-shadow: none !important;
+  height: auto !important;
+  padding: 8px !important;
+  min-width: 250px !important;
+}
+
+/* Target the input fields */
+.swagger-ui input[type="text"],
+.swagger-ui input[type="password"],
+.swagger-ui input[type="search"],
+.swagger-ui input[type="email"],
+.swagger-ui textarea {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid #333 !important;
+}
+
+/* Target operation blocks */
+.swagger-ui .opblock {
+  background-color: #0a0a0a !important;
+  border-color: #333 !important;
+}
+
+/* Override the base HTML elements */
+html body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Extra-specific selectors for servers box */
+div.swagger-ui > div > div.scheme-container {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Direct child selectors for maximum specificity */
+body > * > * > * > .scheme-container,
+body > * > * > * > * > .scheme-container,
+body > * > * > * > * > * > .scheme-container {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Force all white backgrounds to be dark */
+[style*="background-color: rgb(255, 255, 255)"],
+[style*="background-color:#fff"],
+[style*="background-color: #fff"],
+[style*="background-color:white"],
+[style*="background-color: white"],
+[style*="background: white"],
+[style*="background:white"],
+[style*="background: #fff"],
+[style*="background:#fff"] {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Override buttons - ensure all buttons have good contrast */
+.swagger-ui .btn,
+.swagger-ui button:not(.opblock-summary-method) {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border-color: #333 !important;
+}
+
+/* Specific overrides for authorize button */
+.swagger-ui .auth-wrapper .authorize {
+  background-color: #4CAF50 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Override section headers */
+.swagger-ui .opblock .opblock-section-header {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+/* Extreme selector for inline styles */
+[class][style]:not(.opblock-summary-method) {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Target the servers container directly */
+.swagger-ui .servers {
+  background-color: #000000 !important;
+  border: 1px solid #333 !important;
+  border-radius: 4px !important;
+  padding: 16px !important;
+  margin: 20px 0 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+.swagger-ui .servers-title {
+  color: #ffffff !important;
+  margin-bottom: 8px !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+}
+
+.swagger-ui .servers > label {
+  color: #ffffff !important;
+}
+
+.swagger-ui .servers > label select {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid #333 !important;
+  padding: 8px !important;
+  height: auto !important;
+  min-width: 250px !important;
+}
+
+/* Target the actual server select box more directly */
+.swagger-ui select {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid #333 !important;
+}
+
+/* Force background of server selector */
+.swagger-ui .server-container {
+  background-color: #000000 !important;
+  padding: 16px !important;
+  border-radius: 4px !important;
+  border: 1px solid #333 !important;
+  margin-bottom: 20px !important;
+}
+
+/* Style the main box that wraps the servers dropdown */
+.swagger-ui .scheme-container {
+  background-color: #000000 !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid #333 !important;
+  margin: 0 0 20px !important;
+  padding: 16px !important;
+}
+
+/* Improve authorize button contrast */
+.swagger-ui .btn.authorize {
+  background-color: #4CAF50 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.swagger-ui .btn.authorize svg {
+  fill: #ffffff !important;
+}
+
+/* Better section separation */
+.swagger-ui .opblock-tag {
+  border-bottom: 1px solid #333 !important;
+  padding-bottom: 10px !important;
+  margin-top: 20px !important;
+}
+
+/* Improve tag name readability */
+.swagger-ui .opblock-tag-section h3 {
+  color: #ffffff !important;
+  font-weight: bold !important;
+}
+
+/* Make the overall UI easier to read */
+.swagger-ui, 
+.swagger-ui .info .title, 
+.swagger-ui a.nostyle, 
+.swagger-ui .info {
+  color: #ffffff !important;
+}
+
+/* Restore colorful HTTP method buttons */
+.swagger-ui .opblock .opblock-summary-method {
+  font-weight: bold !important;
+  min-width: 80px !important;
+  text-align: center !important;
+  padding: 6px 0px !important;
+  border-radius: 3px !important;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) !important;
+  font-family: sans-serif !important;
+  color: #ffffff !important; /* Force white text */
+  border: none !important; /* Remove borders */
+  background-clip: padding-box !important; /* Ensure background doesn't bleed */
+}
+
+/* GET - blue */
+.swagger-ui .opblock-get .opblock-summary-method {
+  background-color: #61affe !important;
+  color: #ffffff !important; /* Force white text */
+}
+
+/* POST - green */
+.swagger-ui .opblock-post .opblock-summary-method {
+  background-color: #49cc90 !important;
+  color: #ffffff !important; /* Force white text */
+}
+
+/* PUT - orange */
+.swagger-ui .opblock-put .opblock-summary-method {
+  background-color: #fca130 !important;
+  color: #ffffff !important; /* Force white text */
+}
+
+/* DELETE - red */
+.swagger-ui .opblock-delete .opblock-summary-method {
+  background-color: #f93e3e !important;
+  color: #ffffff !important; /* Force white text */
+}
+
+/* PATCH - teal */
+.swagger-ui .opblock-patch .opblock-summary-method {
+  background-color: #50e3c2 !important;
+  color: #ffffff !important; /* Force white text */
+}
+
+/* HEAD - purple */
+.swagger-ui .opblock-head .opblock-summary-method {
+  background-color: #9012fe !important;
+  color: #ffffff !important; /* Force white text */
+}
+
+/* OPTIONS - light purple */
+.swagger-ui .opblock-options .opblock-summary-method {
+  background-color: #0d5aa7 !important;
+  color: #ffffff !important; /* Force white text */
+}
+
+/* Fix method button text - ultra specific selector */
+.swagger-ui .opblock-summary .opblock-summary-method span,
+.swagger-ui .opblock-summary-method *,
+.swagger-ui button.opblock-summary-method {
+  color: #ffffff !important; /* Force white text */
+  background-color: transparent !important; /* Transparent background */
+}
+
+/* Also restore the colorful operation block borders */
+.swagger-ui .opblock-get {
+  border-color: #61affe !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.swagger-ui .opblock-post {
+  border-color: #49cc90 !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.swagger-ui .opblock-put {
+  border-color: #fca130 !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.swagger-ui .opblock-delete {
+  border-color: #f93e3e !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.swagger-ui .opblock-patch {
+  border-color: #50e3c2 !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.swagger-ui .opblock-head {
+  border-color: #9012fe !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.swagger-ui .opblock-options {
+  border-color: #0d5aa7 !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+/* Fix button labels to have proper contrast */
+.swagger-ui .btn {
+  background-color: #333 !important;
+  color: white !important;
+}
+
+/* Fix Try it out buttons */
+.swagger-ui .try-out__btn {
+  background-color: #4990e2 !important;
+  color: white !important;
+  border-color: #4990e2 !important;
+}
+
+/* Fix Execute buttons */
+.swagger-ui .execute {
+  background-color: #4990e2 !important;
+  color: white !important;
+  border-color: #4990e2 !important;
+}
+
+/* Fix Cancel buttons */
+.swagger-ui .btn-clear {
+  background-color: #333 !important;
+  color: white !important;
+  border-color: #333 !important;
+}
+
+/* Style models toggle button */
+.swagger-ui .models-control {
+  color: white !important;
+  background-color: #333 !important;
+}
+
+/* Style schema buttons */
+.swagger-ui .json-schema-form-item button {
+  background-color: #333 !important;
+  color: white !important;
+  border-color: #444 !important;
+}
+
+/* Special handling for "Try it out" and "Execute" buttons */
+.swagger-ui .opblock-summary-control,
+.swagger-ui .try-out__btn,
+.swagger-ui .btn.execute,
+.swagger-ui .btn.authorize,
+.swagger-ui .expand-operation {
+  background-color: #333 !important;
+  color: white !important;
+  border-color: #444 !important;
+}
+
+/* Fix button hover states */
+.swagger-ui .btn:hover {
+  background-color: #444 !important;
+}
+
+/* Make the method buttons look nice */
+.swagger-ui .opblock-summary {
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+/* Fix method button spacing */
+.swagger-ui .opblock-summary-method {
+  margin-right: 10px !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Fix method label containers */
+.swagger-ui .opblock-summary-control {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Ultra specific fix for method button text */
+.opblock-summary-method > span,
+.opblock-summary-method > span > *,
+.opblock-summary-method > * {
+  color: #ffffff !important;
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Fix all nested elements that might have a background */
+.swagger-ui * * {
+  background-color: inherit;
+} 

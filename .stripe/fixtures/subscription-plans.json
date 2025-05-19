@@ -1,0 +1,105 @@
+{
+  "_meta": {
+    "template_version": 0
+  },
+  "fixtures": [
+    {
+      "name": "basic-plan",
+      "path": "/v1/products",
+      "method": "post",
+      "params": {
+        "name": "Basic Plan",
+        "description": "Essential features for individuals and small teams",
+        "metadata": {
+          "type": "subscription",
+          "plan": "basic",
+          "limits": "{\"projects\":5,\"storage\":10}"
+        },
+        "active": true
+      }
+    },
+    {
+      "name": "basic-price",
+      "path": "/v1/prices",
+      "method": "post",
+      "params": {
+        "product": "${basic-plan:id}",
+        "unit_amount": 900,
+        "currency": "usd",
+        "recurring": {
+          "interval": "month"
+        },
+        "metadata": {
+          "type": "subscription",
+          "plan": "basic"
+        }
+      }
+    },
+    {
+      "name": "pro-plan",
+      "path": "/v1/products",
+      "method": "post",
+      "params": {
+        "name": "Pro Plan",
+        "description": "Advanced features for growing teams",
+        "metadata": {
+          "type": "subscription",
+          "plan": "pro",
+          "limits": "{\"projects\":20,\"storage\":50}"
+        },
+        "active": true
+      }
+    },
+    {
+      "name": "pro-price",
+      "path": "/v1/prices",
+      "method": "post",
+      "params": {
+        "product": "${pro-plan:id}",
+        "unit_amount": 2900,
+        "currency": "usd",
+        "recurring": {
+          "interval": "month",
+          "trial_period_days": 14
+        },
+        "metadata": {
+          "type": "subscription",
+          "plan": "pro"
+        }
+      }
+    },
+    {
+      "name": "enterprise-plan",
+      "path": "/v1/products",
+      "method": "post",
+      "params": {
+        "name": "Enterprise Plan",
+        "description": "Complete solution for larger organizations",
+        "metadata": {
+          "type": "subscription",
+          "plan": "enterprise",
+          "limits": "{\"projects\":900,\"storage\":500}"
+        },
+        "active": true
+      }
+    },
+    {
+      "name": "enterprise-price",
+      "path": "/v1/prices",
+      "method": "post",
+      "params": {
+        "product": "${enterprise-plan:id}",
+        "unit_amount": 9900,
+        "currency": "usd",
+        "recurring": {
+          "interval": "month",
+          "trial_period_days": 14
+        },
+        "metadata": {
+          "type": "subscription",
+          "plan": "enterprise"
+        }
+      }
+    }
+  ]
+} 

@@ -1,0 +1,57 @@
+paths:
+  /admin/api/email-verification:
+    post:
+      tags:
+        - Admin
+      summary: Update user email verification status
+      description: Allows administrators to verify or unverify a user's email
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                  description: The ID of the user to update
+                verificationStatus:
+                  type: boolean
+                  description: The new verification status (true=verified, false=unverified)
+              required:
+                - userId
+                - verificationStatus
+      responses:
+        '200':
+          description: Email verification status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+          description: Bad request - missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - not authenticated or not an admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
