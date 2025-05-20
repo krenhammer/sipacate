@@ -1,15 +1,15 @@
-In app/plan/plan.tsx build the ui as components using the attached image
+In app/plan/plan.tsx build the ui as components using the attached image for inspiration
 
 - Sidebar
     - Logo
-    - Ttile
+    - Title
     - Collapse Icon Button Toggle
     - Tabs
         Steps (react-arborist tree ... see below)
         History (thread list)
 - Content Area
     - Markdown editor (marktion)
-    - Modal Trigger Button
+    - Modal Trigger Button (lower right)
         - Chat Popup(non blocking)
 
 Prefer
@@ -71,9 +71,19 @@ Steps Tree (typed state object: valtio)
     - LinkedIn Sponsored Ad
 
 
+The tree second level is either a step or a document
+
 Step type:
 - name: string
 - instructions: string (markdown)
 - systemPrompt: string
 - userPrompt: string
 - result: string
+- created: timestamp
+- updated: timestamp
+
+Document type:
+- name
+- content
+- created
+- updated
