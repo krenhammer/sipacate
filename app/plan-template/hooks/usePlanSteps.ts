@@ -153,6 +153,74 @@ export function usePlanSteps(templateId: string) {
     }
   };
 
+  // Reorder steps
+  const reorderSteps = async (stepsToUpdate: { id: string, order: number }[]) => {
+    try {
+      setLoading(true);
+      
+      const response = await fetch(`/api/plan-templates/${templateId}/steps/reorder`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ steps: stepsToUpdate }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to reorder steps');
+      }
+      
+      // Update the local state with the new order
+      setSteps((prev) => {
+        const updatedSteps = [...prev];
+        
+        // Update the order of each step
+        stepsToUpdate.forEach((step) => {
+          const index = updatedSteps.findIndex((s) => s.id === step.id);
+          if (index !== -1) {
+            updatedSteps[index] = { ...updatedSteps[index], order: step.order };
+          }
+        });
+        
+        return updatedSteps.sort((a, b) => (a.order || 0) - (b.order || 0));
+      });
+      
+      toast.success('Steps reordered successfully');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to reorder steps');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Move a step up or down
+  const moveStep = async (stepId: string, direction: 'up' | 'down') => {
+    const currentSteps = [...steps].sort((a, b) => (a.order || 0) - (b.order || 0));
+    const currentIndex = currentSteps.findIndex((step) => step.id === stepId);
+    
+    if (currentIndex === -1) return;
+    
+    // Cannot move first step up or last step down
+    if (
+      (direction === 'up' && currentIndex === 0) ||
+      (direction === 'down' && currentIndex === currentSteps.length - 1)
+    ) {
+      return;
+    }
+    
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    
+    // Swap the order of the steps
+    const stepsToUpdate = [
+      { id: currentSteps[currentIndex].id, order: currentSteps[newIndex].order || newIndex },
+      { id: currentSteps[newIndex].id, order: currentSteps[currentIndex].order || currentIndex }
+    ];
+    
+    await reorderSteps(stepsToUpdate);
+  };
+
   return {
     steps,
     loading,
@@ -162,5 +230,7 @@ export function usePlanSteps(templateId: string) {
     updateStep,
     deleteStep,
     reorderItems,
+    reorderSteps,
+    moveStep,
   };
 } 

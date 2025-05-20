@@ -18,6 +18,7 @@ export interface PlanStep {
   planTemplateId: string;
   createdById: string;
   organizationId: string | null;
+  order?: number;
   createdAt: Date;
   updatedAt: Date;
   planStepItems?: PlanStepItem[];

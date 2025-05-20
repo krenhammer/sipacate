@@ -21,7 +21,7 @@ export default function PlanTemplateDetail() {
   const router = useRouter();
   const templateId = params.id as string;
 
-  const { steps, loading: stepsLoading, fetchSteps, createStep, updateStep, deleteStep, reorderItems } = usePlanSteps(templateId);
+  const { steps, loading: stepsLoading, fetchSteps, createStep, updateStep, deleteStep, reorderItems, moveStep } = usePlanSteps(templateId);
   const { items, fetchItems, createItem, updateItem, deleteItem } = usePlanItems();
 
   const [template, setTemplate] = useState<PlanTemplate | null>(null);
@@ -185,6 +185,11 @@ export default function PlanTemplateDetail() {
     }
   };
 
+  // Handle step reordering
+  const handleMoveStep = (stepId: string, direction: 'up' | 'down') => {
+    moveStep(stepId, direction);
+  };
+
   // Handle drag and drop reordering
   const handleDragEnd = async (result: any) => {
     if (!result.destination) return;
@@ -248,6 +253,13 @@ export default function PlanTemplateDetail() {
   }
 
   const areAllExpanded = steps.length > 0 && steps.every(step => expandedSteps[step.id]);
+  
+  // Sort steps by order property
+  const sortedSteps = [...steps].sort((a, b) => {
+    const orderA = a.order || 0;
+    const orderB = b.order || 0;
+    return orderA - orderB;
+  });
 
   return (
     <div className="container p-5">
@@ -303,7 +315,7 @@ export default function PlanTemplateDetail() {
         </div>
       ) : (
         <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
-          {steps.map((step) => (
+          {sortedSteps.map((step, index) => (
             <StepCard
               key={step.id}
               step={step}
@@ -315,6 +327,9 @@ export default function PlanTemplateDetail() {
               onDragEnd={handleDragEnd}
               isExpanded={expandedSteps[step.id] || false}
               onToggleExpand={toggleStepExpand}
+              onMoveStep={handleMoveStep}
+              isFirst={index === 0}
+              isLast={index === sortedSteps.length - 1}
             />
           ))}
         </div>

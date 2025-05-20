@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Edit, Trash2, GripVertical, ChevronRight } from "lucide-react";
+import { PlusCircle, Edit, Trash2, GripVertical, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { PlanItem, PlanStep } from "../../types";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,9 @@ interface StepCardProps {
   onDragEnd: (result: any) => void;
   isExpanded: boolean;
   onToggleExpand: (stepId: string) => void;
+  onMoveStep: (stepId: string, direction: 'up' | 'down') => void;
+  isFirst: boolean;
+  isLast: boolean;
 }
 
 export function StepCard({
@@ -27,6 +30,9 @@ export function StepCard({
   onDragEnd,
   isExpanded,
   onToggleExpand,
+  onMoveStep,
+  isFirst,
+  isLast,
 }: StepCardProps) {
   // Ensure planStepItems is an array and sort it by order
   const planStepItems = step.planStepItems ? 
@@ -37,6 +43,25 @@ export function StepCard({
     <Card>
       <CardHeader className="flex flex-row items-center justify-between py-4">
         <div className="flex items-center">
+          <div className="flex flex-col mr-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="mb-1"
+              onClick={() => onMoveStep(step.id, 'up')}
+              disabled={isFirst}
+            >
+              <ChevronUp className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => onMoveStep(step.id, 'down')}
+              disabled={isLast}
+            >
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </div>
           <button 
             onClick={() => onToggleExpand(step.id)}
             className="mr-2 p-1 rounded-sm hover:bg-accent"
