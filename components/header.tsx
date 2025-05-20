@@ -13,6 +13,7 @@ import { UnverifiedUserButton } from "./unverified-user-button"
 import { AnonymousUserButton } from "./anonymous-user-button"
 import { InvitationIndicator } from "./invitation-indicator"
 import { SessionSwitcher } from "./session-switcher"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 
 export function Header() {
     const { data: session } = useSession()
@@ -76,12 +77,37 @@ export function Header() {
                                 )}
                                    {session?.user && (
                                     <>
-                                        <Link href="/assistant" className="text-sm font-medium flex items-center">
-                                            <BotIcon className="mr-1 h-4 w-4" />
-                                        </Link>
-                                        <Link href="/plan" className="text-sm font-medium flex items-center">
-                                            <IoMdChatbubbles className="mr-1 h-4 w-4" />
-                                        </Link>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Link href="/assistant">
+                                                        <Button variant="ghost" size="icon" className="size-8 rounded-full">
+                                                            <BotIcon className="h-4 w-4" />
+                                                            <span className="sr-only">Assistant</span>
+                                                        </Button>
+                                                    </Link>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Assistants</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                        
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Link href="/plan">
+                                                        <Button variant="ghost" size="icon" className="size-8 rounded-full">
+                                                            <IoMdChatbubbles className="h-4 w-4" />
+                                                            <span className="sr-only">Plan</span>
+                                                        </Button>
+                                                    </Link>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Plan</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
                                     </>
                                 )}
                                
