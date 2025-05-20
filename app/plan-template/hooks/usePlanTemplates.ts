@@ -115,13 +115,14 @@ export function usePlanTemplates() {
                 const newItem = itemData.item;
                 
                 // Add the item to the step
-                await apiClient(`/api/plan-templates/${newTemplate.id}/steps/${newStep.id}/items`, {
-                  method: 'POST',
+                await apiClient('/api/plan-items', {
+                  method: 'PATCH',
                   headers: {
                     'Content-Type': 'application/json',
                   },
                   body: JSON.stringify({
                     planItemId: newItem.id,
+                    planStepId: newStep.id,
                     order: stepItem.order,
                   }),
                 });
