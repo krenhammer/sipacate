@@ -85,7 +85,7 @@ export default function PlanTemplatePage() {
   };
 
   return (
-    <div className="container py-6">
+    <div className="container py-6 p-5">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Plan Templates</h1>
