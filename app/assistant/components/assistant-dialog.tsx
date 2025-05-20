@@ -14,9 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useAssistants } from "../hooks/use-assistants";
+import { useAssistants, useFileUpload } from "../hooks";
 import { Assistant } from "../store";
-import { useFileUpload } from "../hooks/use-file-upload";
 import { toast } from "sonner";
 import { AssistantFileUpload } from "./assistant-file-upload";
 import { AssistantFileList } from "./assistant-file-list";
@@ -34,6 +33,7 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
     handleFileUpload, 
     removeFile, 
     clearFiles,
+    updateFileContent,
     isLoading: isFileLoading,
     error: fileError
   } = useFileUpload();
@@ -160,7 +160,11 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
             <div className="grid gap-2">
               <Label>Knowledge Files</Label>
               <AssistantFileUpload onUpload={handleFileUpload} isLoading={isFileLoading} error={fileError} />
-              <AssistantFileList files={files} onRemove={removeFile} />
+              <AssistantFileList 
+                files={files} 
+                onRemove={removeFile} 
+                onUpdateContent={updateFileContent}
+              />
             </div>
           </div>
           

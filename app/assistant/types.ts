@@ -18,7 +18,8 @@ export type AssistantFormData = z.infer<typeof assistantSchema>;
 export const fileSchema = z.object({
   filename: z.string(),
   content: z.string(),
-  fileType: z.enum(["md", "docx", "image"]),
+  fileType: z.enum(["md", "docx", "image", "pdf", "txt"]),
+  size: z.number(),
 });
 
 // Type for file upload

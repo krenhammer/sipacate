@@ -1,71 +1,53 @@
 "use client";
 
-import { useCallback } from "react";
-import { UploadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { FileUpload } from "../types";
+import { Input } from "@/components/ui/input";
+import { Upload } from "lucide-react";
+import { ChangeEvent, useRef } from "react";
 
 interface AssistantFileUploadProps {
-  onUpload: (file: File) => Promise<FileUpload | null>;
+  onUpload: (files: FileList) => void;
   isLoading: boolean;
   error: string | null;
 }
 
-export function AssistantFileUpload({
-  onUpload,
-  isLoading,
-  error
-}: AssistantFileUploadProps) {
-  const handleFileChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (!e.target.files || e.target.files.length === 0) return;
-      
-      const file = e.target.files[0];
-      await onUpload(file);
-      
-      // Reset the input
-      e.target.value = "";
-    },
-    [onUpload]
-  );
+export function AssistantFileUpload({ onUpload, isLoading, error }: AssistantFileUploadProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      onUpload(e.target.files);
+      e.target.value = ''; // Reset the input
+    }
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
 
   return (
-    <div className="space-y-2">
-      <div
-        className={cn(
-          "flex flex-col items-center justify-center rounded-md border border-dashed p-8 text-center",
-          "hover:bg-muted/50 transition-colors cursor-pointer"
-        )}
-        onClick={() => document.getElementById("file-upload")?.click()}
-      >
-        <div className="flex flex-col items-center justify-center space-y-2">
-          <div className="rounded-full bg-primary/10 p-2">
-            <UploadIcon className="h-4 w-4 text-primary" />
-          </div>
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium">
-              Click to upload or drag and drop
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Supports .md, .docx, and image files
-            </p>
-          </div>
-        </div>
-        
-        <input
-          id="file-upload"
+    <div className="flex flex-col gap-2">
+      <div className="flex gap-2">
+        <Input
           type="file"
-          accept=".md,.docx,image/*"
+          ref={fileInputRef}
           onChange={handleFileChange}
           className="hidden"
-          disabled={isLoading}
+          multiple
+          accept=".txt,.md,.pdf,.doc,.docx"
         />
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={handleButtonClick}
+          disabled={isLoading}
+          className="flex gap-2 items-center"
+        >
+          <Upload size={16} />
+          {isLoading ? "Uploading..." : "Upload Files"}
+        </Button>
       </div>
-      
-      {error && (
-        <p className="text-sm text-destructive">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );
 } 

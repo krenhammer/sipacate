@@ -19,46 +19,62 @@ export function useFileUpload() {
     setFiles([]);
   }, []);
 
-  const handleFileUpload = useCallback(async (file: File): Promise<FileUpload | null> => {
+  const updateFileContent = useCallback((filename: string, content: string) => {
+    setFiles(prev => 
+      prev.map(file => 
+        file.filename === filename 
+          ? { ...file, content } 
+          : file
+      )
+    );
+  }, []);
+
+  const handleFileUpload = useCallback(async (files: FileList): Promise<void> => {
     setIsLoading(true);
     setError(null);
     
     try {
-      let content = '';
-      let fileType = '';
-      
-      // Handle different file types
-      if (file.name.endsWith('.md')) {
-        content = await file.text();
-        fileType = 'md';
-      } else if (file.name.endsWith('.docx')) {
-        content = await docxToMarkdown(file);
-        fileType = 'docx';
-      } else if (file.type.startsWith('image/')) {
-        // Convert image to base64
-        const reader = new FileReader();
-        content = await new Promise<string>((resolve, reject) => {
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-        fileType = 'image';
-      } else {
-        throw new Error('Unsupported file type. Please upload .md, .docx, or image files.');
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        let content = '';
+        let fileType = '';
+        
+        // Handle different file types
+        if (file.name.endsWith('.md') || file.name.endsWith('.txt')) {
+          content = await file.text();
+          fileType = file.name.endsWith('.md') ? 'md' : 'txt';
+        } else if (file.name.endsWith('.docx')) {
+          content = await docxToMarkdown(file);
+          fileType = 'docx';
+        } else if (file.type.startsWith('image/')) {
+          // Convert image to base64
+          const reader = new FileReader();
+          content = await new Promise<string>((resolve, reject) => {
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+          fileType = 'image';
+        } else if (file.name.endsWith('.pdf')) {
+          // Just store reference for PDF files
+          content = 'PDF content';
+          fileType = 'pdf';
+        } else {
+          throw new Error('Unsupported file type. Please upload .txt, .md, .docx, .pdf, or image files.');
+        }
+        
+        const fileData: FileUpload = {
+          filename: file.name,
+          content,
+          fileType: fileType as "md" | "docx" | "image" | "pdf" | "txt",
+          size: file.size
+        };
+        
+        addFile(fileData);
       }
-      
-      const fileData: FileUpload = {
-        filename: file.name,
-        content,
-        fileType: fileType as "md" | "docx" | "image"
-      };
-      
-      addFile(fileData);
-      return fileData;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to process file';
       setError(message);
-      return null;
     } finally {
       setIsLoading(false);
     }
@@ -71,6 +87,7 @@ export function useFileUpload() {
     addFile,
     removeFile,
     clearFiles,
+    updateFileContent,
     handleFileUpload
   };
 } 
