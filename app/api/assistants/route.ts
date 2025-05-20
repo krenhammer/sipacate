@@ -9,19 +9,55 @@ import { createAssistantSchema, updateAssistantSchema } from "@/app/assistant/ty
 // GET all assistants
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth.api.getSession(req);
-    if (!session?.userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const sessionResult = await auth.api.getSession({
+      headers: req.headers,
+    });
+    
+    if (!sessionResult) {
+      // Get debug info
+      const headerEntries = Array.from(req.headers.entries());
+      const headers = Object.fromEntries(headerEntries);
+      
+      // Get cookies for debugging (but mask values)
+      const cookies = req.cookies.getAll().map(cookie => ({
+        name: cookie.name,
+        // Only show first few chars of value for security
+        value: cookie.value.substring(0, 4) + '...',
+      }));
+      
+      console.warn('Authentication failed - session info:', { 
+        headers,
+        cookieNames: cookies.map(c => c.name),
+        url: req.url
+      });
+      
+      return new NextResponse(
+        JSON.stringify({ 
+          error: "Not authenticated", 
+          debug: {
+            hasHeaders: Object.keys(headers).length > 0,
+            hasCookies: cookies.length > 0,
+            cookieNames: cookies.map(c => c.name)
+          }
+        }),
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
     }
 
-    const organizationId = session.orgId;
+    const userId = sessionResult.user.id;
+    const organizationId = sessionResult.session.activeOrganizationId;
     const database = getDb();
     
     // Query database for assistants, either organization-specific or user-specific
     const userAssistants = await database.query.assistants.findMany({
       where: organizationId 
         ? eq(assistants.organizationId, organizationId) 
-        : eq(assistants.createdById, session.userId),
+        : eq(assistants.createdById, userId),
       with: {
         files: true
       }
@@ -37,10 +73,47 @@ export async function GET(req: NextRequest) {
 // POST create a new assistant
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession(req);
-    if (!session?.userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const sessionResult = await auth.api.getSession({
+      headers: req.headers,
+    });
+    
+    if (!sessionResult) {
+      // Get debug info
+      const headerEntries = Array.from(req.headers.entries());
+      const headers = Object.fromEntries(headerEntries);
+      
+      // Get cookies for debugging
+      const cookies = req.cookies.getAll().map(cookie => ({
+        name: cookie.name,
+        value: cookie.value.substring(0, 4) + '...',
+      }));
+      
+      console.warn('Authentication failed - session info:', { 
+        headers,
+        cookieNames: cookies.map(c => c.name),
+        url: req.url
+      });
+      
+      return new NextResponse(
+        JSON.stringify({ 
+          error: "Not authenticated", 
+          debug: {
+            hasHeaders: Object.keys(headers).length > 0,
+            hasCookies: cookies.length > 0,
+            cookieNames: cookies.map(c => c.name)
+          }
+        }),
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
     }
+
+    const userId = sessionResult.user.id;
+    const organizationId = sessionResult.session.activeOrganizationId;
 
     const body = await req.json();
     const validatedData = createAssistantSchema.parse(body);
@@ -55,8 +128,8 @@ export async function POST(req: NextRequest) {
       description: validatedData.description,
       instructions: validatedData.instructions,
       knowledge: validatedData.knowledge,
-      organizationId: session.orgId || null,
-      createdById: session.userId,
+      organizationId: organizationId || null,
+      createdById: userId,
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -94,10 +167,47 @@ export async function POST(req: NextRequest) {
 // PUT update an existing assistant
 export async function PUT(req: NextRequest) {
   try {
-    const session = await auth.api.getSession(req);
-    if (!session?.userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const sessionResult = await auth.api.getSession({
+      headers: req.headers,
+    });
+    
+    if (!sessionResult) {
+      // Get debug info
+      const headerEntries = Array.from(req.headers.entries());
+      const headers = Object.fromEntries(headerEntries);
+      
+      // Get cookies for debugging
+      const cookies = req.cookies.getAll().map(cookie => ({
+        name: cookie.name,
+        value: cookie.value.substring(0, 4) + '...',
+      }));
+      
+      console.warn('Authentication failed - session info:', { 
+        headers,
+        cookieNames: cookies.map(c => c.name),
+        url: req.url
+      });
+      
+      return new NextResponse(
+        JSON.stringify({ 
+          error: "Not authenticated", 
+          debug: {
+            hasHeaders: Object.keys(headers).length > 0,
+            hasCookies: cookies.length > 0,
+            cookieNames: cookies.map(c => c.name)
+          }
+        }),
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
     }
+
+    const userId = sessionResult.user.id;
+    const organizationId = sessionResult.session.activeOrganizationId;
 
     const body = await req.json();
     const validatedData = updateAssistantSchema.parse(body);
@@ -112,8 +222,8 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Assistant not found" }, { status: 404 });
     }
     
-    if (existingAssistant.createdById !== session.userId && 
-        existingAssistant.organizationId !== session.orgId) {
+    if (existingAssistant.createdById !== userId && 
+        existingAssistant.organizationId !== organizationId) {
       return NextResponse.json({ error: "Not authorized to update this assistant" }, { status: 403 });
     }
     
@@ -168,10 +278,47 @@ export async function PUT(req: NextRequest) {
 // DELETE an assistant
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await auth.api.getSession(req);
-    if (!session?.userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const sessionResult = await auth.api.getSession({
+      headers: req.headers,
+    });
+    
+    if (!sessionResult) {
+      // Get debug info
+      const headerEntries = Array.from(req.headers.entries());
+      const headers = Object.fromEntries(headerEntries);
+      
+      // Get cookies for debugging
+      const cookies = req.cookies.getAll().map(cookie => ({
+        name: cookie.name,
+        value: cookie.value.substring(0, 4) + '...',
+      }));
+      
+      console.warn('Authentication failed - session info:', { 
+        headers,
+        cookieNames: cookies.map(c => c.name),
+        url: req.url
+      });
+      
+      return new NextResponse(
+        JSON.stringify({ 
+          error: "Not authenticated", 
+          debug: {
+            hasHeaders: Object.keys(headers).length > 0,
+            hasCookies: cookies.length > 0,
+            cookieNames: cookies.map(c => c.name)
+          }
+        }),
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
     }
+    
+    const userId = sessionResult.user.id;
+    const organizationId = sessionResult.session.activeOrganizationId;
     
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
@@ -190,8 +337,8 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Assistant not found" }, { status: 404 });
     }
     
-    if (existingAssistant.createdById !== session.userId && 
-        existingAssistant.organizationId !== session.orgId) {
+    if (existingAssistant.createdById !== userId && 
+        existingAssistant.organizationId !== organizationId) {
       return NextResponse.json({ error: "Not authorized to delete this assistant" }, { status: 403 });
     }
     
