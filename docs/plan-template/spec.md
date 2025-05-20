@@ -53,3 +53,8 @@ Ability to CRUD Plan Templates
         - instructions
         - userPrompt
         - systemPrompt 
+
+        check package.json before installing anything
+
+DO NOT run `bun dev`
+DO NOT restart server
