@@ -28,6 +28,12 @@
     --color-warning-foreground: var(--warning-foreground);
 }
 
+
+html, body, #root {
+    height: 100%;
+    overflow: hidden;
+}
+
 /** iOS Dynamic System Font Scaling */
 /* @supports (-webkit-touch-callout: none) {
     html {

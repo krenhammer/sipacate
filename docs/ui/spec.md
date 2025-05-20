@@ -8,7 +8,7 @@ In app/plan/plan.tsx build the ui as components using the attached image for ins
         Steps (react-arborist tree ... see below)
         History (thread list)
 - Content Area
-    - Markdown editor (marktion)
+    - Markdown editor (marktion) -> show "result" from Step type (see below)
     - Modal Trigger Button (lower right)
         - Chat Popup(non blocking)
 
