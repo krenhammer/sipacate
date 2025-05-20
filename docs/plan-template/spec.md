@@ -32,17 +32,18 @@ Use list icon in components/header.tsx for link
 - userPrompt
 - created
 - updated
-- organization?
+- organization (nullable)
 
 ## UI
 
 Ability to CRUD Plan Templates
 
-- https://ui.shadcn.com/docs/components/combobox with all users/organizations Plan Templates to edit
+- https://ui.shadcn.com/docs/components/combobox with all users/organizations Plan Templates to edit (default first)
 - Add icon Button
 - Trash icon Button (with confirmation)
 
-### Plan Template Drag and drop reorderable List (debounce save on changes)
+### Plan Template 
+Drag and drop reorderable List (Save button)
 
 - PlanSteps 
     - Collapsible sections

@@ -6,6 +6,8 @@ Need a way to crud AI Assistants which will be used to pass resuable context to 
 
 Use robot icon in components/header.tsx for link  
 
+Current selected assistant should be stored in valtio
+
 ## Data
 - id
 - name
