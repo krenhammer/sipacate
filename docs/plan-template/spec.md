@@ -5,6 +5,8 @@ Create a way for Users to CRUD plan Tempates which consit of plan steps each wit
     - Drizzle migration for persistance to db
     - CRUD API (zod validation)
 
+Use list icon in components/header.tsx for link  
+
 ## Types
 
 ### PlanItemType
@@ -37,7 +39,8 @@ Create a way for Users to CRUD plan Tempates which consit of plan steps each wit
 Ability to CRUD Plan Templates
 
 - https://ui.shadcn.com/docs/components/combobox with all users/organizations Plan Templates to edit
-- Add Icon Button
+- Add icon Button
+- Trash icon Button (with confirmation)
 
 ### Plan Template Drag and drop reorderable List (debounce save on changes)
 
@@ -54,7 +57,13 @@ Ability to CRUD Plan Templates
         - userPrompt
         - systemPrompt 
 
-        check package.json before installing anything
+Prefer 
+- shadcn components
+- radix components
+- react-icons
+- lucide icons
+
+check package.json before installing anything
 
 DO NOT run `bun dev`
 DO NOT restart server
