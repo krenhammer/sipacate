@@ -27,14 +27,18 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
-    // Get the user session
-    const session = await auth.api.getSession(request)
+    // Get the user session using the headers properly
+    const session = await auth.api.getSession({
+        headers: request.headers
+    })
     
     // If no session, redirect to login for protected routes
     if (!session?.user && 
         (pathname.startsWith("/dashboard") || 
          pathname.startsWith("/admin") || 
-         pathname.startsWith("/settings"))) {
+         pathname.startsWith("/settings") ||
+         pathname.startsWith("/plan-template") ||
+         pathname.startsWith("/assistant"))) {
         return NextResponse.redirect(new URL("/auth/sign-in", request.url))
     }
     
@@ -58,7 +62,15 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    return NextResponse.next()
+    // Add debug info to response header in development mode
+    const response = NextResponse.next()
+    if (isDevelopment && session?.user) {
+        response.headers.set('X-User-Id', session.user.id)
+        response.headers.set('X-User-Email', session.user.email)
+        response.headers.set('X-Session-Active', 'true')
+    }
+
+    return response
 }
 
 export const config = {

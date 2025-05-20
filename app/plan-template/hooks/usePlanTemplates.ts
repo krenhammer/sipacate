@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { PlanTemplate, PlanStep, PlanItem, PlanStepItem, PlanItemType } from '../types';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
+import { apiClient } from '@/lib/api-client';
 
 export function usePlanTemplates() {
   const [templates, setTemplates] = useState<PlanTemplate[]>([]);
@@ -12,22 +13,12 @@ export function usePlanTemplates() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('/api/plan-templates');
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch templates');
-      }
-      
-      const data = await response.json();
+      const data = await apiClient<{ templates: PlanTemplate[] }>('/api/plan-templates');
       setTemplates(data.templates || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to fetch templates',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to fetch templates');
     } finally {
       setLoading(false);
     }
@@ -39,7 +30,7 @@ export function usePlanTemplates() {
       setLoading(true);
       console.log("Creating template with:", { title, description });
       
-      const response = await fetch('/api/plan-templates', {
+      const data = await apiClient<{ template: PlanTemplate }>('/api/plan-templates', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,37 +41,14 @@ export function usePlanTemplates() {
         }),
       });
       
-      console.log("Response status:", response.status);
-      
-      if (!response.ok) {
-        let errorData;
-        try {
-          errorData = await response.json();
-          console.error("Error response data:", errorData);
-        } catch (parseError) {
-          console.error("Error parsing response:", parseError);
-          errorData = { error: `HTTP error ${response.status}` };
-        }
-        
-        throw new Error(errorData.error || errorData.details || `Failed to create template (${response.status})`);
-      }
-      
-      const data = await response.json();
       console.log("Success response:", data);
       
       setTemplates((prev) => [...prev, data.template]);
-      toast({
-        title: 'Success',
-        description: 'Template created successfully',
-      });
+      toast.success('Template created successfully');
       return data.template;
     } catch (err) {
       console.error("Error in createTemplate:", err);
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to create template',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to create template');
       throw err;
     } finally {
       setLoading(false);
@@ -93,7 +61,7 @@ export function usePlanTemplates() {
       setLoading(true);
       
       // First create the template
-      const templateResponse = await fetch('/api/plan-templates', {
+      const templateData = await apiClient<{ template: PlanTemplate }>('/api/plan-templates', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,19 +72,13 @@ export function usePlanTemplates() {
         }),
       });
       
-      if (!templateResponse.ok) {
-        const errorData = await templateResponse.json();
-        throw new Error(errorData.error || 'Failed to create template');
-      }
-      
-      const templateData = await templateResponse.json();
       const newTemplate = templateData.template;
       
       // If there are steps, create them
       if (importedTemplate.steps && importedTemplate.steps.length > 0) {
         for (const step of importedTemplate.steps) {
           // Create step
-          const stepResponse = await fetch(`/api/plan-templates/${newTemplate.id}/steps`, {
+          const stepData = await apiClient<{ step: PlanStep }>(`/api/plan-templates/${newTemplate.id}/steps`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -127,12 +89,6 @@ export function usePlanTemplates() {
             }),
           });
           
-          if (!stepResponse.ok) {
-            const errorData = await stepResponse.json();
-            throw new Error(errorData.error || 'Failed to create step');
-          }
-          
-          const stepData = await stepResponse.json();
           const newStep = stepData.step;
           
           // If the step has items, create them and link them
@@ -141,7 +97,7 @@ export function usePlanTemplates() {
               if (stepItem.planItem) {
                 // Create the plan item
                 const planItem = stepItem.planItem;
-                const itemResponse = await fetch('/api/plan-items', {
+                const itemData = await apiClient<{ item: PlanItem }>('/api/plan-items', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -156,16 +112,10 @@ export function usePlanTemplates() {
                   }),
                 });
                 
-                if (!itemResponse.ok) {
-                  const errorData = await itemResponse.json();
-                  throw new Error(errorData.error || 'Failed to create item');
-                }
-                
-                const itemData = await itemResponse.json();
                 const newItem = itemData.item;
                 
                 // Add the item to the step
-                await fetch(`/api/plan-templates/${newTemplate.id}/steps/${newStep.id}/items`, {
+                await apiClient(`/api/plan-templates/${newTemplate.id}/steps/${newStep.id}/items`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -187,11 +137,7 @@ export function usePlanTemplates() {
       return newTemplate;
     } catch (err) {
       console.error("Error importing template from YAML:", err);
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to import template',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to import template');
       throw err;
     } finally {
       setLoading(false);
@@ -202,7 +148,8 @@ export function usePlanTemplates() {
   const updateTemplate = async (id: string, title: string, description?: string) => {
     try {
       setLoading(true);
-      const response = await fetch('/api/plan-templates', {
+      
+      const data = await apiClient<{ template: PlanTemplate }>('/api/plan-templates', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -214,29 +161,15 @@ export function usePlanTemplates() {
         }),
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update template');
-      }
-      
-      const data = await response.json();
-      
       setTemplates((prev) =>
         prev.map((template) => (template.id === id ? data.template : template))
       );
       
-      toast({
-        title: 'Success',
-        description: 'Template updated successfully',
-      });
+      toast.success('Template updated successfully');
       
       return data.template;
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to update template',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to update template');
       throw err;
     } finally {
       setLoading(false);
@@ -247,27 +180,16 @@ export function usePlanTemplates() {
   const deleteTemplate = async (id: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/plan-templates?id=${id}`, {
+      
+      await apiClient(`/api/plan-templates?id=${id}`, {
         method: 'DELETE',
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete template');
-      }
-      
       setTemplates((prev) => prev.filter((template) => template.id !== id));
       
-      toast({
-        title: 'Success',
-        description: 'Template deleted successfully',
-      });
+      toast.success('Template deleted successfully');
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to delete template',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to delete template');
       throw err;
     } finally {
       setLoading(false);

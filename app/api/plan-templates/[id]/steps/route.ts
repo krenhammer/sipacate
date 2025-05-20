@@ -25,12 +25,19 @@ export async function GET(
 ) {
   try {
     // Get the current user's session
-    const session = await auth.api.getSession(request);
+    const session = await auth.api.getSession({
+      headers: request.headers
+    });
     
     if (!session) {
       return new NextResponse(
         JSON.stringify({ error: "Not authenticated" }),
-        { status: 401 }
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
     }
     
@@ -51,8 +58,8 @@ export async function GET(
     
     // Check if the user has access to the template
     if (template.createdById !== userId && 
-        (!session.user.activeOrganizationId || 
-          template.organizationId !== session.user.activeOrganizationId)) {
+        (!session.activeOrganizationId || 
+          template.organizationId !== session.activeOrganizationId)) {
       return new NextResponse(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 403 }
@@ -92,12 +99,19 @@ export async function POST(
 ) {
   try {
     // Get the current user's session
-    const session = await auth.api.getSession(request);
+    const session = await auth.api.getSession({
+      headers: request.headers
+    });
     
     if (!session) {
       return new NextResponse(
         JSON.stringify({ error: "Not authenticated" }),
-        { status: 401 }
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
     }
     
@@ -118,8 +132,8 @@ export async function POST(
     
     // Check if the user has access to the template
     if (template.createdById !== userId && 
-        (!session.user.activeOrganizationId || 
-          template.organizationId !== session.user.activeOrganizationId)) {
+        (!session.activeOrganizationId || 
+          template.organizationId !== session.activeOrganizationId)) {
       return new NextResponse(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 403 }

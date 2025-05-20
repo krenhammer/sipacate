@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PlanStep } from '../types';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
+import { apiClient } from '@/lib/api-client';
 
 export function usePlanSteps(templateId: string) {
   const [steps, setSteps] = useState<PlanStep[]>([]);
@@ -12,22 +13,12 @@ export function usePlanSteps(templateId: string) {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`/api/plan-templates/${templateId}/steps`);
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch steps');
-      }
-      
-      const data = await response.json();
+      const data = await apiClient<{ steps: PlanStep[] }>(`/api/plan-templates/${templateId}/steps`);
       setSteps(data.steps || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to fetch steps',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to fetch steps');
     } finally {
       setLoading(false);
     }
@@ -37,7 +28,8 @@ export function usePlanSteps(templateId: string) {
   const createStep = async (title: string, description?: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/plan-templates/${templateId}/steps`, {
+      
+      const data = await apiClient<{ step: PlanStep }>(`/api/plan-templates/${templateId}/steps`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -48,24 +40,13 @@ export function usePlanSteps(templateId: string) {
         }),
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create step');
-      }
-      
-      const data = await response.json();
       setSteps((prev) => [...prev, data.step]);
-      toast({
-        title: 'Success',
-        description: 'Step created successfully',
-      });
+      
+      toast.success('Step created successfully');
+      
       return data.step;
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to create step',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to create step');
       throw err;
     } finally {
       setLoading(false);
@@ -73,44 +54,30 @@ export function usePlanSteps(templateId: string) {
   };
 
   // Update a step
-  const updateStep = async (id: string, title: string, description?: string) => {
+  const updateStep = async (stepId: string, title: string, description?: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/plan-templates/${templateId}/steps`, {
+      
+      const data = await apiClient<{ step: PlanStep }>(`/api/plan-templates/${templateId}/steps/${stepId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id,
           title,
           description,
         }),
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update step');
-      }
-      
-      const data = await response.json();
-      
       setSteps((prev) =>
-        prev.map((step) => (step.id === id ? data.step : step))
+        prev.map((step) => (step.id === stepId ? data.step : step))
       );
       
-      toast({
-        title: 'Success',
-        description: 'Step updated successfully',
-      });
+      toast.success('Step updated successfully');
       
       return data.step;
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to update step',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to update step');
       throw err;
     } finally {
       setLoading(false);
@@ -121,27 +88,16 @@ export function usePlanSteps(templateId: string) {
   const deleteStep = async (stepId: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/plan-templates/${templateId}/steps?stepId=${stepId}`, {
+      
+      await apiClient(`/api/plan-templates/${templateId}/steps/${stepId}`, {
         method: 'DELETE',
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete step');
-      }
-      
       setSteps((prev) => prev.filter((step) => step.id !== stepId));
       
-      toast({
-        title: 'Success',
-        description: 'Step deleted successfully',
-      });
+      toast.success('Step deleted successfully');
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to delete step',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to delete step');
       throw err;
     } finally {
       setLoading(false);
@@ -188,16 +144,9 @@ export function usePlanSteps(templateId: string) {
         });
       });
       
-      toast({
-        title: 'Success',
-        description: 'Items reordered successfully',
-      });
+      toast.success('Items reordered successfully');
     } catch (err) {
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to reorder items',
-        variant: 'destructive',
-      });
+      toast.error(err instanceof Error ? err.message : 'Failed to reorder items');
       throw err;
     } finally {
       setLoading(false);

@@ -67,3 +67,34 @@ export const authClient = createAuthClient({
         })
     ]
 })
+
+/**
+ * Gets the current session cookie for use in API requests
+ */
+export function getSessionCookie() {
+  // If in browser, return the session cookie
+  if (typeof document !== 'undefined') {
+    const cookies = document.cookie.split(';');
+    const sessionCookie = cookies.find(cookie => 
+      cookie.trim().startsWith('better-auth.session=')
+    );
+    
+    return sessionCookie?.trim() || '';
+  }
+  
+  return '';
+}
+
+/**
+ * Forces a session refresh to revalidate the authentication state
+ */
+export async function refreshSession() {
+  try {
+    // Try to refresh the session directly
+    await authClient.refreshSession();
+    return true;
+  } catch (error) {
+    console.error('Failed to refresh session:', error);
+    return false;
+  }
+}

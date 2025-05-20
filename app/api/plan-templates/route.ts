@@ -24,12 +24,19 @@ const updatePlanTemplateSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Get the current user's session
-    const session = await auth.api.getSession(request);
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
     
     if (!session) {
       return new NextResponse(
         JSON.stringify({ error: "Not authenticated" }),
-        { status: 401 }
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
     }
     
@@ -88,12 +95,19 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Get the current user's session
-    const session = await auth.api.getSession(request);
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
     
     if (!session) {
       return new NextResponse(
         JSON.stringify({ error: "Not authenticated" }),
-        { status: 401 }
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
     }
     
@@ -156,12 +170,19 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     // Get the current user's session
-    const session = await auth.api.getSession(request);
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
     
     if (!session) {
       return new NextResponse(
         JSON.stringify({ error: "Not authenticated" }),
-        { status: 401 }
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
     }
     
@@ -248,12 +269,19 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // Get the current user's session
-    const session = await auth.api.getSession(request);
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
     
     if (!session) {
       return new NextResponse(
         JSON.stringify({ error: "Not authenticated" }),
-        { status: 401 }
+        { 
+          status: 401,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
     }
     

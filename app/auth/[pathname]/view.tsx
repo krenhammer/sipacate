@@ -27,6 +27,7 @@ export function AuthView({ pathname }: { pathname: string }) {
 
     return (
         <main className="flex grow flex-col items-center justify-center gap-3 p-4">
+             
             <AuthCard pathname={pathname}/>
 
             <p
@@ -35,14 +36,14 @@ export function AuthView({ pathname }: { pathname: string }) {
                     "text-muted-foreground text-xs"
                 )}
             >
-                Powered by{" "}
+                {/* Powered by{" "}
                 <Link
                     className="text-warning underline"
                     href="https://better-auth.com"
                     target="_blank"
                 >
                     better-auth.
-                </Link>
+                </Link> */}
             </p>
         </main>
     )

@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
 import { YamlExportButton, YamlImportButton } from "./components/yaml-export-import";
+import { SessionDebug } from "@/app/components/session-debug";
 
 // Schema for template form
 const templateFormSchema = z.object({
@@ -87,11 +88,10 @@ export default function PlanTemplatePage() {
 
   return (
     <div className="container py-6 p-5">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Plan Templates</h1>
-          <p className="text-muted-foreground">Create and manage plan templates with reusable steps</p>
-        </div>
+      <SessionDebug />
+      
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Plan Templates</h1>
         <div className="flex space-x-2">
           <YamlImportButton />
           <Button onClick={handleOpenCreateDialog}>
