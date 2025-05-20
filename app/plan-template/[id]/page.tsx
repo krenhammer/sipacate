@@ -8,7 +8,7 @@ import { usePlanItems } from "../hooks/usePlanItems";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
-import { ArrowLeft, PlusCircle } from "lucide-react";
+import { ArrowLeft, PlusCircle, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { YamlExportButton } from "../components/yaml-export-import";
 import { StepCard } from "./components/StepCard";
@@ -26,6 +26,7 @@ export default function PlanTemplateDetail() {
 
   const [template, setTemplate] = useState<PlanTemplate | null>(null);
   const [loadingTemplate, setLoadingTemplate] = useState(true);
+  const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({});
 
   // Dialog states
   const [showCreateStepDialog, setShowCreateStepDialog] = useState(false);
@@ -81,6 +82,37 @@ export default function PlanTemplateDetail() {
     fetchSteps();
     fetchItems();
   }, [templateId]);
+
+  // Initialize expanded steps when steps are loaded
+  useEffect(() => {
+    if (steps.length > 0) {
+      const initialExpandedState: Record<string, boolean> = {};
+      steps.forEach(step => {
+        initialExpandedState[step.id] = false;
+      });
+      setExpandedSteps(initialExpandedState);
+    }
+  }, [steps]);
+
+  // Handle toggling step expansion
+  const toggleStepExpand = (stepId: string) => {
+    setExpandedSteps(prev => ({
+      ...prev,
+      [stepId]: !prev[stepId]
+    }));
+  };
+
+  // Handle expand/collapse all
+  const toggleAllSteps = () => {
+    const areAllExpanded = steps.every(step => expandedSteps[step.id]);
+    const newExpandedState: Record<string, boolean> = {};
+    
+    steps.forEach(step => {
+      newExpandedState[step.id] = !areAllExpanded;
+    });
+    
+    setExpandedSteps(newExpandedState);
+  };
 
   // Handle step operations
   const handleOpenCreateStepDialog = () => {
@@ -215,6 +247,8 @@ export default function PlanTemplateDetail() {
     );
   }
 
+  const areAllExpanded = steps.length > 0 && steps.every(step => expandedSteps[step.id]);
+
   return (
     <div className="container p-5">
       <div className="flex items-center mb-6">
@@ -237,10 +271,25 @@ export default function PlanTemplateDetail() {
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Steps</h2>
-        <Button onClick={handleOpenCreateStepDialog}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Step
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={toggleAllSteps}>
+            {areAllExpanded ? (
+              <>
+                <ChevronUp className="mr-2 h-4 w-4" />
+                Collapse All
+              </>
+            ) : (
+              <>
+                <ChevronDown className="mr-2 h-4 w-4" />
+                Expand All
+              </>
+            )}
+          </Button>
+          <Button onClick={handleOpenCreateStepDialog}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Step
+          </Button>
+        </div>
       </div>
 
       {steps.length === 0 ? (
@@ -264,6 +313,8 @@ export default function PlanTemplateDetail() {
               onEditItem={handleOpenEditItemDialog}
               onRemoveItem={(item, stepItemId) => setDeleteItemDialog({ item, stepItemId })}
               onDragEnd={handleDragEnd}
+              isExpanded={expandedSteps[step.id] || false}
+              onToggleExpand={toggleStepExpand}
             />
           ))}
         </div>
