@@ -1,11 +1,11 @@
-# Plan Template (/plan-template)
+# Plan Templates (/plan-template)
 
 Create a way for Users to CRUD plan Tempates which consit of plan steps each with plan item children
 
     - Drizzle migration for persistance to db
     - CRUD API (zod validation)
 
-Use list icon in components/header.tsx for link  
+Use circular ghost list icon in components/header.tsx for link with tooltip 
 
 ## Types
 
