@@ -1,0 +1,184 @@
+id: sample-assistant-123
+name: Research Assistant
+description: A versatile research assistant that helps with academic research, data analysis, and literature reviews.
+instructions: >
+  You are a helpful research assistant with expertise in academic research methods, data analysis, and literature reviews.
+  When answering questions:
+  1. Prioritize scholarly sources
+  2. Provide balanced perspectives
+  3. Cite your sources clearly
+  4. State limitations of your knowledge
+  5. Suggest follow-up research directions
+knowledge: >
+  This assistant has knowledge of research methodologies, statistical analysis techniques, 
+  academic writing standards, and citation practices.
+organizationId: null
+createdById: user-123456
+createdAt: "2023-10-15T12:00:00.000Z"
+updatedAt: "2023-10-15T12:00:00.000Z"
+files:
+  - id: file-001
+    assistantId: sample-assistant-123
+    content: |
+      # Research Methodology Guide
+
+      ## Introduction to Research Methods
+      
+      This guide provides an overview of common research methodologies used in academic contexts.
+      
+      ## Quantitative Research
+      
+      Quantitative research involves the collection and analysis of numerical data. It typically follows these steps:
+      
+      1. Defining the research question
+      2. Formulating hypotheses
+      3. Collecting data through surveys, experiments, or observations
+      4. Analyzing data using statistical methods
+      5. Drawing conclusions and reporting findings
+      
+      ### Common Statistical Methods
+      
+      - Descriptive statistics: mean, median, mode, standard deviation
+      - Inferential statistics: t-tests, ANOVA, regression analysis
+      - Factor analysis and cluster analysis
+      
+      ## Qualitative Research
+      
+      Qualitative research focuses on understanding phenomena through:
+      
+      - Interviews
+      - Focus groups
+      - Participant observation
+      - Document analysis
+      
+      ### Analysis Approaches
+      
+      - Thematic analysis
+      - Grounded theory
+      - Narrative analysis
+      - Discourse analysis
+      
+      ## Mixed Methods
+      
+      Mixed methods research combines both quantitative and qualitative approaches to provide a more comprehensive understanding of research problems.
+    filename: research-methodology.md
+    fileType: markdown
+    createdAt: "2023-10-15T12:00:00.000Z"
+    updatedAt: "2023-10-15T12:00:00.000Z"
+  - id: file-002
+    assistantId: sample-assistant-123
+    content: |
+      # Literature Review Best Practices
+      
+      ## Purpose of Literature Reviews
+      
+      A literature review serves several important purposes in academic research:
+      
+      - Establishes what is already known about a topic
+      - Identifies research gaps
+      - Places your research within a scholarly context
+      - Demonstrates your knowledge of the field
+      
+      ## Steps in Conducting a Literature Review
+      
+      1. **Define your research question**
+         Clearly articulate what you want to know.
+      
+      2. **Search for relevant literature**
+         Use academic databases, Google Scholar, and library resources.
+      
+      3. **Evaluate and select sources**
+         Assess relevance, credibility, and recency.
+      
+      4. **Analyze and synthesize**
+         Identify themes, controversies, and gaps.
+      
+      5. **Organize your review**
+         Structure can be chronological, thematic, methodological, or theoretical.
+      
+      6. **Write the review**
+         Present a coherent narrative of the literature.
+      
+      ## Common Mistakes to Avoid
+      
+      - Simply summarizing sources without synthesis
+      - Including irrelevant literature
+      - Over-relying on secondary sources
+      - Misrepresenting authors' findings
+      - Not critiquing the literature
+      
+      ## Types of Literature Reviews
+      
+      - Narrative reviews
+      - Systematic reviews
+      - Meta-analyses
+      - Scoping reviews
+      - Integrative reviews
+    filename: literature-review-guide.md
+    fileType: markdown
+    createdAt: "2023-10-15T12:00:00.000Z"
+    updatedAt: "2023-10-15T12:00:00.000Z"
+  - id: file-003
+    assistantId: sample-assistant-123
+    content: |
+      # Academic Citation Styles Guide
+      
+      ## Why Citations Matter
+      
+      Citations serve multiple purposes in academic writing:
+      
+      - Acknowledge the work of others
+      - Support arguments and claims
+      - Allow readers to locate your sources
+      - Demonstrate your research thoroughness
+      - Avoid plagiarism
+      
+      ## Major Citation Styles
+      
+      ### APA (American Psychological Association)
+      
+      **In-text citation example:**
+      According to Smith (2020), the results were significant.
+      
+      **Reference list example:**
+      Smith, J. (2020). The impact of climate change on coral reefs. *Journal of Marine Biology*, 45(2), 112-128. https://doi.org/10.1234/jmb.2020.45.2.112
+      
+      **Common uses:** Psychology, education, social sciences
+      
+      ### MLA (Modern Language Association)
+      
+      **In-text citation example:**
+      The poet explores themes of isolation (Johnson 45).
+      
+      **Works cited example:**
+      Johnson, Amanda. *Poetry and Isolation in Modern Literature*. Oxford UP, 2019.
+      
+      **Common uses:** Literature, arts, humanities
+      
+      ### Chicago/Turabian
+      
+      **Notes-Bibliography style example (footnote):**
+      1. Michael Roberts, *The History of Scientific Revolution* (New York: Academic Press, 2018), 156.
+      
+      **Author-Date style example (in-text):**
+      (Roberts 2018, 156)
+      
+      **Common uses:** History, arts, business
+      
+      ### Vancouver
+      
+      **In-text citation example:**
+      Recent studies have shown promising results (1).
+      
+      **Reference list example:**
+      1. Johnson AB, Smith CD. Advances in cancer treatment. J Med Res. 2021;45(3):234-40.
+      
+      **Common uses:** Medicine, biomedicine
+      
+      ## Digital Object Identifiers (DOIs)
+      
+      Most citation styles now recommend including DOIs when available, as they provide a permanent link to digital resources even if URLs change.
+    filename: citation-styles.md
+    fileType: markdown
+    createdAt: "2023-10-15T12:00:00.000Z"
+    updatedAt: "2023-10-15T12:00:00.000Z" 

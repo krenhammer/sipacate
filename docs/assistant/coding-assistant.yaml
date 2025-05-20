@@ -1,0 +1,588 @@
+id: coding-assistant-456
+name: Full Stack Developer Assistant
+description: An AI assistant specialized in full-stack web development, helping with coding challenges, debugging, and best practices.
+instructions: >
+  You are a helpful coding assistant specializing in full-stack web development.
+  When helping users:
+  1. Provide clean, well-commented code examples
+  2. Explain the reasoning behind your solutions
+  3. Suggest best practices and potential optimizations
+  4. Consider security implications
+  5. Point out edge cases the user might have missed
+knowledge: >
+  This assistant has knowledge of modern web development frameworks and libraries including
+  React, Next.js, Node.js, Express, TypeScript, TailwindCSS, and database technologies 
+  like PostgreSQL, MongoDB, and Drizzle ORM.
+organizationId: null
+createdById: user-123456
+createdAt: "2023-11-20T09:30:00.000Z"
+updatedAt: "2023-11-20T09:30:00.000Z"
+files:
+  - id: file-101
+    assistantId: coding-assistant-456
+    content: |
+      # Next.js API Routes Best Practices
+      
+      Next.js API routes provide a straightforward solution for building API endpoints within your Next.js application. Here are some best practices to follow when working with API routes:
+      
+      ## Directory Structure
+      
+      Organize your API routes meaningfully:
+      
+      ```
+      app/
+        api/
+          users/
+            [id]/
+              route.ts    # GET/PUT/DELETE /api/users/:id
+            route.ts      # GET/POST /api/users
+          auth/
+            [...auth]/
+              route.ts    # /api/auth/* (for auth.js)
+      ```
+      
+      ## Input Validation
+      
+      Always validate input data. Use libraries like `zod` or `joi`:
+      
+      ```typescript
+      // Example with zod
+      import { z } from "zod";
+      import { NextRequest, NextResponse } from "next/server";
+      
+      const userSchema = z.object({
+        name: z.string().min(1, "Name is required"),
+        email: z.string().email("Invalid email format"),
+        age: z.number().min(18, "Must be at least 18 years old").optional(),
+      });
+      
+      export async function POST(req: NextRequest) {
+        try {
+          const body = await req.json();
+          const validatedData = userSchema.parse(body);
+          
+          // Process the validated data...
+          
+          return NextResponse.json({ success: true });
+        } catch (error) {
+          return NextResponse.json({ error: "Invalid input data" }, { status: 400 });
+        }
+      }
+      ```
+      
+      ## Error Handling
+      
+      Implement consistent error handling:
+      
+      ```typescript
+      export async function GET(req: NextRequest) {
+        try {
+          // Database operations or other logic that might fail
+          const data = await fetchSomeData();
+          return NextResponse.json({ data });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          
+          if (error.code === "NOT_FOUND") {
+            return NextResponse.json(
+              { error: "Resource not found" },
+              { status: 404 }
+            );
+          }
+          
+          return NextResponse.json(
+            { error: "Internal server error" },
+            { status: 500 }
+          );
+        }
+      }
+      ```
+      
+      ## Authentication
+      
+      Protect your routes with authentication middleware:
+      
+      ```typescript
+      import { NextRequest, NextResponse } from "next/server";
+      import { auth } from "@/lib/auth";
+      
+      export async function GET(req: NextRequest) {
+        // Authenticate the request
+        const session = await auth.api.getSession({
+          headers: req.headers
+        });
+        
+        if (!session) {
+          return NextResponse.json(
+            { error: "Unauthorized" },
+            { status: 401 }
+          );
+        }
+        
+        // Continue with authorized operation
+        // ...
+      }
+      ```
+      
+      ## Rate Limiting
+      
+      Implement rate limiting for public APIs:
+      
+      ```typescript
+      import { NextRequest, NextResponse } from "next/server";
+      import { rateLimit } from "@/lib/rate-limit";
+      
+      // Create a rate limiter that allows 5 requests per minute
+      const limiter = rateLimit({
+        interval: 60 * 1000, // 1 minute
+        uniqueTokenPerInterval: 500,
+        limit: 5,
+      });
+      
+      export async function GET(req: NextRequest) {
+        const ip = req.headers.get("x-forwarded-for") || "unknown";
+        
+        try {
+          await limiter.check(ip);
+          // Continue with the request...
+        } catch {
+          return NextResponse.json(
+            { error: "Rate limit exceeded" },
+            { status: 429 }
+          );
+        }
+      }
+      ```
+      
+      ## CORS Handling
+      
+      Configure CORS for cross-origin requests:
+      
+      ```typescript
+      export async function OPTIONS(req: NextRequest) {
+        return new NextResponse(null, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          },
+        });
+      }
+      
+      export async function GET(req: NextRequest) {
+        // Handle the actual request...
+        return NextResponse.json(
+          { data: "some data" },
+          {
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+            },
+          }
+        );
+      }
+      ```
+    filename: nextjs-api-best-practices.md
+    fileType: markdown
+    createdAt: "2023-11-20T09:30:00.000Z"
+    updatedAt: "2023-11-20T09:30:00.000Z"
+  - id: file-102
+    assistantId: coding-assistant-456
+    content: |
+      # React Performance Optimization Techniques
+      
+      Optimizing React applications for performance is crucial for providing a smooth user experience. Here are key techniques to improve your React application's performance:
+      
+      ## 1. Memoization with React.memo
+      
+      Prevent unnecessary re-renders of functional components by using `React.memo`:
+      
+      ```jsx
+      const MovieCard = React.memo(({ title, poster, rating }) => {
+        return (
+          <div className="movie-card">
+            <img src={poster} alt={title} />
+            <h3>{title}</h3>
+            <span>{rating}/10</span>
+          </div>
+        );
+      });
+      ```
+      
+      ## 2. Optimize State Management
+      
+      ### Use Functional Updates
+      
+      ```jsx
+      // Instead of this
+      setCount(count + 1);
+      
+      // Do this
+      setCount(prevCount => prevCount + 1);
+      ```
+      
+      ### Batch Related State Updates
+      
+      ```jsx
+      // React 18+ automatically batches these updates
+      function handleClick() {
+        setLoading(true);
+        setPage(1);
+        setSearchTerm('');
+      }
+      ```
+      
+      ## 3. Use Hooks Effectively
+      
+      ### useMemo for Expensive Calculations
+      
+      ```jsx
+      const sortedAndFilteredItems = useMemo(() => {
+        return items
+          .filter(item => item.name.includes(searchTerm))
+          .sort((a, b) => a.name.localeCompare(b.name));
+      }, [items, searchTerm]);
+      ```
+      
+      ### useCallback for Stable Function References
+      
+      ```jsx
+      const handleSubmit = useCallback((values) => {
+        saveData(values);
+        navigateToNextPage();
+      }, [saveData, navigateToNextPage]);
+      ```
+      
+      ## 4. Virtualize Long Lists
+      
+      Use virtualization libraries like `react-window` or `react-virtualized` for large lists:
+      
+      ```jsx
+      import { FixedSizeList } from 'react-window';
+      
+      const ListComponent = ({ items }) => {
+        const Row = ({ index, style }) => (
+          <div style={style}>
+            {items[index].name}
+          </div>
+        );
+        
+        return (
+          <FixedSizeList
+            height={500}
+            width="100%"
+            itemCount={items.length}
+            itemSize={35}
+          >
+            {Row}
+          </FixedSizeList>
+        );
+      };
+      ```
+      
+      ## 5. Code Splitting
+      
+      Split your code into smaller chunks loaded on demand:
+      
+      ```jsx
+      import { lazy, Suspense } from 'react';
+      
+      // Lazy load components
+      const Dashboard = lazy(() => import('./Dashboard'));
+      const Settings = lazy(() => import('./Settings'));
+      
+      function App() {
+        return (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </Suspense>
+        );
+      }
+      ```
+      
+      ## 6. Use Web Workers for CPU-Intensive Tasks
+      
+      Move heavy computations off the main thread:
+      
+      ```jsx
+      // worker.js
+      self.addEventListener('message', (e) => {
+        const result = performHeavyCalculation(e.data);
+        self.postMessage(result);
+      });
+      
+      // Component
+      function DataProcessor() {
+        const [result, setResult] = useState(null);
+        
+        const processData = useCallback((data) => {
+          const worker = new Worker('./worker.js');
+          worker.postMessage(data);
+          worker.onmessage = (e) => {
+            setResult(e.data);
+            worker.terminate();
+          };
+        }, []);
+        
+        // ...
+      }
+      ```
+      
+      ## 7. Image Optimization
+      
+      Optimize images using next/image in Next.js applications:
+      
+      ```jsx
+      import Image from 'next/image';
+      
+      function ProductCard({ product }) {
+        return (
+          <div>
+            <Image
+              src={product.image}
+              alt={product.name}
+              width={300}
+              height={200}
+              placeholder="blur"
+              blurDataURL={product.thumbhash}
+            />
+            <h3>{product.name}</h3>
+          </div>
+        );
+      }
+      ```
+      
+      ## 8. Profiling and Measuring
+      
+      Use React's built-in Profiler or Chrome DevTools to identify performance bottlenecks:
+      
+      ```jsx
+      import { Profiler } from 'react';
+      
+      function onRenderCallback(
+        id, // the "id" prop of the Profiler tree
+        phase, // either "mount" or "update"
+        actualDuration, // time spent rendering
+        baseDuration, // estimated time for full render
+        startTime, // when React began rendering
+        commitTime // when React committed changes
+      ) {
+        console.log(`Component ${id} took ${actualDuration}ms to render`);
+      }
+      
+      function App() {
+        return (
+          <Profiler id="App" onRender={onRenderCallback}>
+            <YourComponent />
+          </Profiler>
+        );
+      }
+      ```
+    filename: react-performance-optimization.md
+    fileType: markdown
+    createdAt: "2023-11-20T09:30:00.000Z"
+    updatedAt: "2023-11-20T09:30:00.000Z"
+  - id: file-103
+    assistantId: coding-assistant-456
+    content: |
+      # Drizzle ORM Quick Reference Guide
+      
+      Drizzle ORM is a lightweight, type-safe ORM for TypeScript that works with multiple SQL databases. This reference guide covers common patterns and best practices.
+      
+      ## Database Schema Definition
+      
+      ```typescript
+      // schema.ts
+      import { pgTable, serial, text, integer, timestamp, boolean } from 'drizzle-orm/pg-core';
+      
+      // Define users table
+      export const users = pgTable('users', {
+        id: serial('id').primaryKey(),
+        name: text('name').notNull(),
+        email: text('email').notNull().unique(),
+        password: text('password').notNull(),
+        role: text('role', { enum: ['user', 'admin'] }).default('user').notNull(),
+        createdAt: timestamp('created_at').defaultNow().notNull(),
+        updatedAt: timestamp('updated_at').defaultNow().notNull(),
+      });
+      
+      // Define posts table with relation to users
+      export const posts = pgTable('posts', {
+        id: serial('id').primaryKey(),
+        title: text('title').notNull(),
+        content: text('content').notNull(),
+        published: boolean('published').default(false).notNull(),
+        authorId: integer('author_id').references(() => users.id).notNull(),
+        createdAt: timestamp('created_at').defaultNow().notNull(),
+        updatedAt: timestamp('updated_at').defaultNow().notNull(),
+      });
+      ```
+      
+      ## Database Connection
+      
+      ```typescript
+      // db.ts
+      import { drizzle } from 'drizzle-orm/node-postgres';
+      import { Pool } from 'pg';
+      import * as schema from './schema';
+      
+      // Create a PostgreSQL connection pool
+      const pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+      });
+      
+      // Create a Drizzle instance with your schema
+      export const db = drizzle(pool, { schema });
+      ```
+      
+      ## Basic CRUD Operations
+      
+      ### Insert
+      
+      ```typescript
+      // Single insert
+      const [newUser] = await db.insert(users).values({
+        name: 'Alice Johnson',
+        email: 'alice@example.com',
+        password: hashedPassword,
+      }).returning();
+      
+      // Batch insert
+      const newUsers = await db.insert(users).values([
+        { name: 'Bob Smith', email: 'bob@example.com', password: hash1 },
+        { name: 'Carol Davis', email: 'carol@example.com', password: hash2 },
+      ]).returning();
+      ```
+      
+      ### Select
+      
+      ```typescript
+      // Select all
+      const allUsers = await db.select().from(users);
+      
+      // Select specific columns
+      const userEmails = await db.select({ id: users.id, email: users.email }).from(users);
+      
+      // Select with conditions
+      const admins = await db.select().from(users).where(eq(users.role, 'admin'));
+      
+      // Select with joins
+      const postsWithAuthors = await db.select({
+        postId: posts.id,
+        title: posts.title,
+        authorName: users.name,
+      }).from(posts).innerJoin(users, eq(posts.authorId, users.id));
+      
+      // Count
+      const userCount = await db.select({ count: count() }).from(users);
+      
+      // Pagination
+      const page = 1;
+      const pageSize = 10;
+      const paginatedUsers = await db.select()
+        .from(users)
+        .limit(pageSize)
+        .offset((page - 1) * pageSize);
+      ```
+      
+      ### Update
+      
+      ```typescript
+      // Update a record
+      await db.update(users)
+        .set({ name: 'Alice Williams', updatedAt: new Date() })
+        .where(eq(users.id, 1));
+      
+      // Update with returning
+      const [updatedUser] = await db.update(users)
+        .set({ role: 'admin' })
+        .where(eq(users.id, 1))
+        .returning();
+      ```
+      
+      ### Delete
+      
+      ```typescript
+      // Delete records
+      await db.delete(posts).where(eq(posts.authorId, 1));
+      
+      // Delete with returning
+      const deletedPosts = await db.delete(posts)
+        .where(eq(posts.authorId, 1))
+        .returning();
+      ```
+      
+      ## Transactions
+      
+      ```typescript
+      // Using transactions
+      await db.transaction(async (tx) => {
+        const [user] = await tx.insert(users).values({
+          name: 'John Doe',
+          email: 'john@example.com',
+          password: hashedPassword,
+        }).returning();
+        
+        await tx.insert(posts).values({
+          title: 'My First Post',
+          content: 'Hello world!',
+          authorId: user.id,
+        });
+      });
+      ```
+      
+      ## Migrations with Drizzle Kit
+      
+      ```bash
+      # Generate migrations from schema changes
+      bun drizzle-kit generate:pg
+      
+      # Apply migrations
+      bun drizzle-kit migrate
+      ```
+      
+      ## Relationships and Complex Queries
+      
+      ```typescript
+      // Define relationship in schema
+      export const userRelations = relations(users, ({ many }) => ({
+        posts: many(posts),
+      }));
+      
+      export const postRelations = relations(posts, ({ one }) => ({
+        author: one(users, {
+          fields: [posts.authorId],
+          references: [users.id],
+        }),
+      }));
+      
+      // Fetch with relations
+      const usersWithPosts = await db.query.users.findMany({
+        with: {
+          posts: true,
+        },
+      });
+      
+      // Complex query with joins and filters
+      const popularPosts = await db
+        .select({
+          postId: posts.id,
+          title: posts.title,
+          authorName: users.name,
+          commentCount: count(comments.id),
+        })
+        .from(posts)
+        .innerJoin(users, eq(posts.authorId, users.id))
+        .leftJoin(comments, eq(comments.postId, posts.id))
+        .where(eq(posts.published, true))
+        .groupBy(posts.id, posts.title, users.name)
+        .having(gt(count(comments.id), 5))
+        .orderBy(desc(count(comments.id)))
+        .limit(10);
+      ```
+    filename: drizzle-orm-reference.md
+    fileType: markdown
+    createdAt: "2023-11-20T09:30:00.000Z"
+    updatedAt: "2023-11-20T09:30:00.000Z" 
