@@ -25,3 +25,14 @@ Use flowchildren icon in components/header.tsx for link
     - Plan Templates (default first)
     - Assistants (default first))
 - Save button (validation)
+
+Prefer 
+- shadcn components
+- radix components
+- react-icons
+- lucide icons
+
+check package.json before installing anything
+
+DO NOT run `bun dev`
+DO NOT restart server
