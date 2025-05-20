@@ -8,6 +8,7 @@ import { PencilIcon, TrashIcon, PlusIcon, FileIcon } from "lucide-react";
 import { AssistantDialog } from "./assistant-dialog";
 import { DeleteAssistantDialog } from "./delete-assistant-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { YamlExportButton } from "./yaml-export-import";
 
 export function AssistantList() {
   const { assistants, isLoading, error, fetchAssistants } = useAssistants();
@@ -91,6 +92,8 @@ export function AssistantList() {
           </CardContent>
           
           <CardFooter className="flex justify-end gap-2">
+            <YamlExportButton assistant={assistant} />
+            
             <DeleteAssistantDialog assistantId={assistant.id} assistantName={assistant.name}>
               <Button variant="outline" size="icon">
                 <TrashIcon className="w-4 h-4" />
@@ -128,6 +131,7 @@ function AssistantListSkeleton() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end gap-2">
+            <Skeleton className="h-9 w-9" />
             <Skeleton className="h-9 w-9" />
             <Skeleton className="h-9 w-9" />
           </CardFooter>

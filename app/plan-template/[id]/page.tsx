@@ -22,6 +22,7 @@ import { z } from "zod";
 import { ArrowLeft, PlusCircle, Trash2, Edit, GripVertical } from "lucide-react";
 import Link from "next/link";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { YamlExportButton } from "../components/yaml-export-import";
 
 // Schema for step form
 const stepFormSchema = z.object({
@@ -301,9 +302,12 @@ export default function PlanTemplateDetail() {
             Back
           </Link>
         </Button>
-        <div>
+        <div className="flex-grow">
           <h1 className="text-3xl font-bold">{template.title}</h1>
           <p className="text-muted-foreground">{template.description || "No description"}</p>
+        </div>
+        <div className="ml-4">
+          <YamlExportButton template={template} />
         </div>
       </div>
 

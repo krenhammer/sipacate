@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { PlanTemplate } from '../types';
+import { PlanTemplate, PlanStep, PlanItem, PlanStepItem, PlanItemType } from '../types';
 import { toast } from '@/components/ui/use-toast';
 
 export function usePlanTemplates() {
@@ -79,6 +79,117 @@ export function usePlanTemplates() {
       toast({
         title: 'Error',
         description: err instanceof Error ? err.message : 'Failed to create template',
+        variant: 'destructive',
+      });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Create template from imported YAML
+  const createTemplateFromYaml = async (importedTemplate: PlanTemplate) => {
+    try {
+      setLoading(true);
+      
+      // First create the template
+      const templateResponse = await fetch('/api/plan-templates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: importedTemplate.title,
+          description: importedTemplate.description,
+        }),
+      });
+      
+      if (!templateResponse.ok) {
+        const errorData = await templateResponse.json();
+        throw new Error(errorData.error || 'Failed to create template');
+      }
+      
+      const templateData = await templateResponse.json();
+      const newTemplate = templateData.template;
+      
+      // If there are steps, create them
+      if (importedTemplate.steps && importedTemplate.steps.length > 0) {
+        for (const step of importedTemplate.steps) {
+          // Create step
+          const stepResponse = await fetch(`/api/plan-templates/${newTemplate.id}/steps`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title: step.title,
+              description: step.description,
+            }),
+          });
+          
+          if (!stepResponse.ok) {
+            const errorData = await stepResponse.json();
+            throw new Error(errorData.error || 'Failed to create step');
+          }
+          
+          const stepData = await stepResponse.json();
+          const newStep = stepData.step;
+          
+          // If the step has items, create them and link them
+          if (step.planStepItems && step.planStepItems.length > 0) {
+            for (const stepItem of step.planStepItems) {
+              if (stepItem.planItem) {
+                // Create the plan item
+                const planItem = stepItem.planItem;
+                const itemResponse = await fetch('/api/plan-items', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    title: planItem.title,
+                    description: planItem.description,
+                    type: planItem.type as PlanItemType,
+                    instructions: planItem.instructions,
+                    systemPrompt: planItem.systemPrompt,
+                    userPrompt: planItem.userPrompt,
+                  }),
+                });
+                
+                if (!itemResponse.ok) {
+                  const errorData = await itemResponse.json();
+                  throw new Error(errorData.error || 'Failed to create item');
+                }
+                
+                const itemData = await itemResponse.json();
+                const newItem = itemData.item;
+                
+                // Add the item to the step
+                await fetch(`/api/plan-templates/${newTemplate.id}/steps/${newStep.id}/items`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    planItemId: newItem.id,
+                    order: stepItem.order,
+                  }),
+                });
+              }
+            }
+          }
+        }
+      }
+      
+      // Fetch updated templates to include the newly created one with all its steps
+      await fetchTemplates();
+      
+      return newTemplate;
+    } catch (err) {
+      console.error("Error importing template from YAML:", err);
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to import template',
         variant: 'destructive',
       });
       throw err;
@@ -174,6 +285,7 @@ export function usePlanTemplates() {
     error,
     fetchTemplates,
     createTemplate,
+    createTemplateFromYaml,
     updateTemplate,
     deleteTemplate,
   };

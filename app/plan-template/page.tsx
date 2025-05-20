@@ -17,6 +17,7 @@ import { PlusCircle, Trash2, Edit, ListChecks } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
+import { YamlExportButton, YamlImportButton } from "./components/yaml-export-import";
 
 // Schema for template form
 const templateFormSchema = z.object({
@@ -91,10 +92,13 @@ export default function PlanTemplatePage() {
           <h1 className="text-3xl font-bold">Plan Templates</h1>
           <p className="text-muted-foreground">Create and manage plan templates with reusable steps</p>
         </div>
-        <Button onClick={handleOpenCreateDialog}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Create Template
-        </Button>
+        <div className="flex space-x-2">
+          <YamlImportButton />
+          <Button onClick={handleOpenCreateDialog}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Create Template
+          </Button>
+        </div>
       </div>
 
       <Separator className="my-6" />
@@ -108,10 +112,13 @@ export default function PlanTemplatePage() {
           <ListChecks className="mx-auto h-12 w-12 text-muted-foreground" />
           <h3 className="mt-4 text-lg font-semibold">No templates yet</h3>
           <p className="text-muted-foreground">Create your first template to get started</p>
-          <Button onClick={handleOpenCreateDialog} className="mt-4">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Create Template
-          </Button>
+          <div className="flex justify-center mt-4 space-x-2">
+            <YamlImportButton />
+            <Button onClick={handleOpenCreateDialog}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Create Template
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -147,6 +154,7 @@ export default function PlanTemplatePage() {
                   </Tooltip>
                 </TooltipProvider>
                 <div className="flex space-x-2">
+                  <YamlExportButton template={template} />
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
