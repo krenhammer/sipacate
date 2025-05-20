@@ -182,3 +182,30 @@ export const apikeys = pgTable("apikey", {
     permissions: text("permissions"),
     metadata: jsonb("metadata")
 });
+
+export const assistants = pgTable("assistant", {
+    id: idColumn,
+    name: varchar("name", { length: 255 }).notNull(),
+    description: text("description"),
+    instructions: text("instructions"),
+    knowledge: text("knowledge"),
+    organizationId: varchar("organization_id", { length: 255 })
+        .references(() => organizations.id, { onDelete: "set null" }),
+    createdById: varchar("created_by", { length: 255 })
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: createdAtColumn,
+    updatedAt: updatedAtColumn
+});
+
+export const assistantFiles = pgTable("assistant_file", {
+    id: idColumn,
+    assistantId: varchar("assistant_id", { length: 255 })
+        .notNull()
+        .references(() => assistants.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    filename: varchar("filename", { length: 255 }).notNull(),
+    fileType: varchar("file_type", { length: 50 }).notNull(), // md, docx, image
+    createdAt: createdAtColumn,
+    updatedAt: updatedAtColumn
+});

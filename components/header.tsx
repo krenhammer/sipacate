@@ -6,7 +6,8 @@ import Link from "next/link"
 import { useAdminStatus, useSession } from "@/hooks/use-auth-hooks"
 import { ModeToggle } from "./mode-toggle"
 import { Button } from "./ui/button"
-import { Settings } from "lucide-react"
+import { BotIcon, Settings } from "lucide-react"
+import { IoMdChatbubbles } from "react-icons/io";
 import { ImpersonatedUserButton } from "./impersonated-user-button"
 import { UnverifiedUserButton } from "./unverified-user-button"
 import { AnonymousUserButton } from "./anonymous-user-button"
@@ -47,31 +48,43 @@ export function Header() {
                         {/* Only show these links if no session or email is verified */}
                         {(!session?.user || isEmailVerified) && (
                             <>
+                             {isAdmin && (
+                                    <Link href="/admin" className="text-sm font-medium">
+                                        Admin
+                                    </Link>
+                                )}
                                 {!session?.user && (
                                     <Link href="/pricing" className="text-sm font-medium">
                                         Pricing
                                     </Link>
                                 )}
-                                {session?.user && (
+                                {/* {session?.user && (
                                     <Link href="/dashboard" className="text-sm font-medium">
                                         Dashboard
                                     </Link>
-                                )}
+                                )} */}
                                 {isManager && session?.user && (
                                     <>
-                                        <Link href="/api-keys" className="text-sm font-medium">
+                                        {/* <Link href="/api-keys" className="text-sm font-medium">
                                             API Keys
-                                        </Link>
+                                        </Link> */}
+                                       
                                         {/* <Link href="/api-docs" className="text-sm font-medium">
                                             API Docs
                                         </Link> */}
                                     </>
                                 )}
-                                {isAdmin && (
-                                    <Link href="/admin" className="text-sm font-medium">
-                                        Admin
-                                    </Link>
+                                   {session?.user && (
+                                    <>
+                                        <Link href="/assistant" className="text-sm font-medium flex items-center">
+                                            <BotIcon className="mr-1 h-4 w-4" />
+                                        </Link>
+                                        <Link href="/plan" className="text-sm font-medium flex items-center">
+                                            <IoMdChatbubbles className="mr-1 h-4 w-4" />
+                                        </Link>
+                                    </>
                                 )}
+                               
                             </>
                         )}
                     </nav>
