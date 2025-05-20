@@ -13,11 +13,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { PlusCircle, Trash2, Edit, ListChecks } from "lucide-react";
+import { PlusCircle, Trash2, Edit, ListChecks, Check } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
 import { YamlExportButton, YamlImportButton } from "./components/yaml-export-import";
+import { planTemplateState } from "./store/planTemplateState";
 
 // Schema for template form
 const templateFormSchema = z.object({
@@ -122,7 +123,26 @@ export default function PlanTemplatePage() {
           {templates.map((template) => (
             <Card key={template.id}>
               <CardHeader>
-                <CardTitle>{template.title}</CardTitle>
+                <div className="flex flex-row items-center justify-between">
+                  <CardTitle>{template.title}</CardTitle>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => planTemplateState.selectTemplate(template)}
+                        >
+                          <Check className="h-4 w-4 mr-2" />
+                          {planTemplateState.selectedTemplate?.id === template.id ? "Selected" : "Select"}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Select this Marketing Plan</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <CardDescription>
                   {template.description || "No description"}
                 </CardDescription>
