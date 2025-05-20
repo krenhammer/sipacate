@@ -1,0 +1,167 @@
+# YAML Template for Marketing Plan Template Import
+# This template follows the structure required for import into the system
+
+# Basic Template Information
+id: marketing-strategy-plan
+title: Marketing Strategy Plan
+description: A comprehensive marketing strategy plan template with step-by-step guidance
+createdById: user123
+organizationId: org456
+createdAt: '2023-10-15T00:00:00.000Z'
+updatedAt: '2023-10-15T00:00:00.000Z'
+
+# Template Steps
+steps:
+  # Step 1: ICP (Ideal Customer Profile)
+  - id: icp
+    title: Ideal Customer Profile (ICP)
+    description: Define your target audience demographics, pain points, and goals
+    planTemplateId: marketing-strategy-plan
+    createdById: user123
+    organizationId: org456
+    createdAt: '2023-10-15T00:00:00.000Z'
+    updatedAt: '2023-10-15T00:00:00.000Z'
+    planStepItems:
+      - id: icp-item-1
+        planStepId: icp
+        planItemId: icp-item-1
+        order: 0
+        createdAt: '2023-10-15T00:00:00.000Z'
+        updatedAt: '2023-10-15T00:00:00.000Z'
+        planItem:
+          id: icp-item-1
+          title: ICP Development
+          description: Create a detailed ideal customer profile
+          type: Document
+          instructions: "# Create an Ideal Customer Profile\n\nDefine your target audience demographics, pain points, and goals."
+          systemPrompt: "You are an expert marketing consultant."
+          userPrompt: "Help me create an Ideal Customer Profile for my business."
+          createdById: user123
+          organizationId: org456
+          createdAt: '2023-10-15T00:00:00.000Z'
+          updatedAt: '2023-10-15T00:00:00.000Z'
+  
+  # Step 2: Personas
+  - id: personas
+    title: Personas
+    description: Create detailed profiles of your ideal customers
+    planTemplateId: marketing-strategy-plan
+    createdById: user123
+    organizationId: org456
+    createdAt: '2023-10-15T00:00:00.000Z'
+    updatedAt: '2023-10-15T00:00:00.000Z'
+    planStepItems:
+      - id: identify-buyers-item
+        planStepId: personas
+        planItemId: identify-buyers-item
+        order: 0
+        createdAt: '2023-10-15T00:00:00.000Z'
+        updatedAt: '2023-10-15T00:00:00.000Z'
+        planItem:
+          id: identify-buyers-item
+          title: Identify Buyers
+          description: List the key decision makers and influencers
+          type: Document
+          instructions: "# Identify Your Buyers\n\nList the key decision makers and influencers."
+          systemPrompt: "You are a B2B sales expert."
+          userPrompt: "Help me identify the key decision makers for my product."
+          createdById: user123
+          organizationId: org456
+          createdAt: '2023-10-15T00:00:00.000Z'
+          updatedAt: '2023-10-15T00:00:00.000Z'
+      
+      - id: one-pagers-item
+        planStepId: personas
+        planItemId: one-pagers-item
+        order: 1
+        createdAt: '2023-10-15T00:00:00.000Z'
+        updatedAt: '2023-10-15T00:00:00.000Z'
+        planItem:
+          id: one-pagers-item
+          title: One Pagers
+          description: Create concise one-page summaries for each persona
+          type: Document
+          instructions: "# Create One-Pager Documents\n\nCreate concise one-page summaries for each persona."
+          systemPrompt: "You are a marketing content specialist."
+          userPrompt: "Help me create effective one-pagers for my target personas."
+          createdById: user123
+          organizationId: org456
+          createdAt: '2023-10-15T00:00:00.000Z'
+          updatedAt: '2023-10-15T00:00:00.000Z'
+  
+  # Step 3: Brand Voice
+  - id: brand-voice
+    title: Brand Voice
+    description: Create a consistent tone and messaging style for your brand
+    planTemplateId: marketing-strategy-plan
+    createdById: user123
+    organizationId: org456
+    createdAt: '2023-10-15T00:00:00.000Z'
+    updatedAt: '2023-10-15T00:00:00.000Z'
+    planStepItems:
+      - id: tone-messaging-item
+        planStepId: brand-voice
+        planItemId: tone-messaging-item
+        order: 0
+        createdAt: '2023-10-15T00:00:00.000Z'
+        updatedAt: '2023-10-15T00:00:00.000Z'
+        planItem:
+          id: tone-messaging-item
+          title: Tone, Structure and Messaging
+          description: Define your brand's tone of voice and messaging framework
+          type: Document
+          instructions: "# Define Your Brand Voice\n\nCreate a consistent tone and messaging style for your brand."
+          systemPrompt: ""
+          userPrompt: ""
+          createdById: user123
+          organizationId: org456
+          createdAt: '2023-10-15T00:00:00.000Z'
+          updatedAt: '2023-10-15T00:00:00.000Z'
+
+  # Step 4: Email Outreach
+  - id: email-outreach
+    title: Email Outreach
+    description: Develop email sequences for outreach and follow-up
+    planTemplateId: marketing-strategy-plan
+    createdById: user123
+    organizationId: org456
+    createdAt: '2023-10-15T00:00:00.000Z'
+    updatedAt: '2023-10-15T00:00:00.000Z'
+    planStepItems:
+      - id: first-response-email
+        planStepId: email-outreach
+        planItemId: first-response-email
+        order: 0
+        createdAt: '2023-10-15T00:00:00.000Z'
+        updatedAt: '2023-10-15T00:00:00.000Z'
+        planItem:
+          id: first-response-email
+          title: First Response Email
+          description: Create an initial outreach email template
+          type: Document
+          instructions: "# Create Email Campaigns\n\nDevelop email templates for initial outreach."
+          systemPrompt: ""
+          userPrompt: ""
+          createdById: user123
+          organizationId: org456
+          createdAt: '2023-10-15T00:00:00.000Z'
+          updatedAt: '2023-10-15T00:00:00.000Z'
+      
+      - id: follow-up-email
+        planStepId: email-outreach
+        planItemId: follow-up-email
+        order: 1
+        createdAt: '2023-10-15T00:00:00.000Z'
+        updatedAt: '2023-10-15T00:00:00.000Z'
+        planItem:
+          id: follow-up-email
+          title: Follow-up Email (No Reply)
+          description: Create a follow-up email template for non-responders
+          type: Document
+          instructions: "# Create Follow-up Email\n\nDevelop a follow-up email template for contacts who haven't responded."
+          systemPrompt: ""
+          userPrompt: ""
+          createdById: user123
+          organizationId: org456
+          createdAt: '2023-10-15T00:00:00.000Z'
+          updatedAt: '2023-10-15T00:00:00.000Z'
