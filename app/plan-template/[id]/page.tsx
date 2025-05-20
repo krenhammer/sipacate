@@ -50,23 +50,23 @@ export default function PlanTemplateDetail() {
   const params = useParams();
   const router = useRouter();
   const templateId = params.id as string;
-  
+
   const { steps, loading: stepsLoading, fetchSteps, createStep, updateStep, deleteStep, reorderItems } = usePlanSteps(templateId);
   const { items, fetchItems, createItem, updateItem, deleteItem, addItemToStep } = usePlanItems();
-  
+
   const [template, setTemplate] = useState<PlanTemplate | null>(null);
   const [loadingTemplate, setLoadingTemplate] = useState(true);
-  
+
   const [showCreateStepDialog, setShowCreateStepDialog] = useState(false);
   const [showEditStepDialog, setShowEditStepDialog] = useState(false);
   const [editingStep, setEditingStep] = useState<PlanStep | null>(null);
   const [deleteStepDialog, setDeleteStepDialog] = useState<PlanStep | null>(null);
-  
+
   const [showCreateItemDialog, setShowCreateItemDialog] = useState(false);
   const [showEditItemDialog, setShowEditItemDialog] = useState(false);
   const [editingItem, setEditingItem] = useState<PlanItem | null>(null);
   const [currentStepId, setCurrentStepId] = useState<string | null>(null);
-  const [deleteItemDialog, setDeleteItemDialog] = useState<{item: PlanItem, stepItemId: string} | null>(null);
+  const [deleteItemDialog, setDeleteItemDialog] = useState<{ item: PlanItem, stepItemId: string } | null>(null);
 
   // Step form
   const stepForm = useForm<StepFormData>({
@@ -95,15 +95,15 @@ export default function PlanTemplateDetail() {
     try {
       setLoadingTemplate(true);
       const response = await fetch(`/api/plan-templates`);
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to fetch templates');
       }
-      
+
       const data = await response.json();
       const foundTemplate = data.templates.find((t: PlanTemplate) => t.id === templateId);
-      
+
       if (!foundTemplate) {
         toast({
           title: 'Error',
@@ -113,7 +113,7 @@ export default function PlanTemplateDetail() {
         router.push('/plan-template');
         return;
       }
-      
+
       setTemplate(foundTemplate);
     } catch (err) {
       toast({
@@ -234,9 +234,9 @@ export default function PlanTemplateDetail() {
   // Handle drag and drop reordering
   const handleDragEnd = async (result: any) => {
     if (!result.destination) return;
-    
+
     const { source, destination, draggableId } = result;
-    
+
     // If dropped in the same droppable and position didn't change
     if (
       source.droppableId === destination.droppableId &&
@@ -244,25 +244,25 @@ export default function PlanTemplateDetail() {
     ) {
       return;
     }
-    
+
     const stepId = source.droppableId;
     const step = steps.find((s) => s.id === stepId);
-    
+
     if (!step || !step.planStepItems || step.planStepItems.length === 0) return;
-    
+
     // Create a copy of the items
     const itemsCopy = [...step.planStepItems];
-    
+
     // Reorder the items
     const [removed] = itemsCopy.splice(source.index, 1);
     itemsCopy.splice(destination.index, 0, removed);
-    
+
     // Update the order property
     const updatedItems = itemsCopy.map((item, index) => ({
       id: item.id,
       order: index,
     }));
-    
+
     // Send the reordered items to the server
     await reorderItems(stepId, updatedItems);
   };
@@ -331,15 +331,22 @@ export default function PlanTemplateDetail() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
           {steps.map((step) => (
             <Card key={step.id}>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>{step.title}</CardTitle>
+                  <CardTitle className="text-lg">{step.title}</CardTitle>
                   <CardDescription>{step.description || "No description"}</CardDescription>
                 </div>
                 <div className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleOpenCreateItemDialog(step.id)}
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Item
+                  </Button>
                   <Button
                     variant="outline"
                     size="icon"
@@ -357,16 +364,7 @@ export default function PlanTemplateDetail() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="mb-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => handleOpenCreateItemDialog(step.id)}
-                  >
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Item
-                  </Button>
-                </div>
-
+              
                 {step.planStepItems && step.planStepItems.length > 0 ? (
                   <DragDropContext onDragEnd={handleDragEnd}>
                     <Droppable droppableId={step.id}>
@@ -382,7 +380,7 @@ export default function PlanTemplateDetail() {
                               .map((stepItem, index) => {
                                 const item = stepItem.planItem;
                                 if (!item) return null;
-                                
+
                                 return (
                                   <Draggable
                                     key={stepItem.id}
@@ -421,7 +419,7 @@ export default function PlanTemplateDetail() {
                                             <Button
                                               variant="outline"
                                               size="sm"
-                                              onClick={() => setDeleteItemDialog({item, stepItemId: stepItem.id})}
+                                              onClick={() => setDeleteItemDialog({ item, stepItemId: stepItem.id })}
                                             >
                                               Remove
                                             </Button>
@@ -662,42 +660,42 @@ export default function PlanTemplateDetail() {
                   </FormItem>
                 )}
               />
-               
-                <>
-                  <FormField
-                    control={itemForm.control}
-                    name="systemPrompt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>System Prompt</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Enter system prompt (optional)"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={itemForm.control}
-                    name="userPrompt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>User Prompt</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Enter user prompt (optional)"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              
+
+              <>
+                <FormField
+                  control={itemForm.control}
+                  name="systemPrompt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>System Prompt</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter system prompt (optional)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={itemForm.control}
+                  name="userPrompt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>User Prompt</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter user prompt (optional)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+
               <DialogFooter>
                 <Button type="submit">Add Item</Button>
               </DialogFooter>
