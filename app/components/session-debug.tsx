@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { authClient } from '@/lib/auth-client';
+import { authClient, refreshSession } from '@/lib/auth-client';
 import { apiClient } from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, LogIn } from 'lucide-react';
+import { RefreshCw, LogIn, Key } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export function SessionDebug() {
   const [clientSession, setClientSession] = useState<any>(null);
   const [serverSession, setServerSession] = useState<any>(null);
   const [debugInfo, setDebugInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function fetchSessions() {
@@ -47,11 +49,30 @@ export function SessionDebug() {
     }
   }
 
+  async function handleRefreshSession() {
+    try {
+      setRefreshing(true);
+      const success = await refreshSession();
+      
+      if (success) {
+        toast.success('Session refreshed successfully');
+        await fetchSessions(); // Refetch to show updated session data
+      } else {
+        toast.error('Failed to refresh session');
+      }
+    } catch (error) {
+      console.error('Error refreshing session:', error);
+      toast.error('Error refreshing session');
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
   useEffect(() => {
     fetchSessions();
   }, []);
 
-  if (loading) return <div className="p-4 text-center">Loading session data...</div>;
+  if (loading && !refreshing) return <div className="p-4 text-center">Loading session data...</div>;
   
   if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
   
@@ -70,9 +91,25 @@ export function SessionDebug() {
               </Link>
             </Button>
           )}
-          <Button variant="outline" size="sm" onClick={fetchSessions}>
-            <RefreshCw className="h-3 w-3 mr-1" />
-            Refresh
+          {isAuthenticated && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRefreshSession} 
+              disabled={refreshing}
+            >
+              <Key className="h-3 w-3 mr-1" />
+              {refreshing ? 'Refreshing...' : 'Refresh Session'}
+            </Button>
+          )}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={fetchSessions} 
+            disabled={loading}
+          >
+            <RefreshCw className="h-3 w-3 mr-1" spin={loading} />
+            {loading ? 'Loading...' : 'Refresh Data'}
           </Button>
         </div>
       </div>

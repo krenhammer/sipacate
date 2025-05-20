@@ -90,9 +90,36 @@ export function getSessionCookie() {
  */
 export async function refreshSession() {
   try {
-    // Try to refresh the session directly
-    await authClient.refreshSession();
-    return true;
+    // Get existing session first
+    const currentSession = await authClient.getSession();
+    
+    // Try to refresh the session if exists
+    if (currentSession.data) {
+      // Directly call refreshSession if available
+      if (typeof authClient.refreshSession === 'function') {
+        await authClient.refreshSession();
+        return true;
+      }
+      
+      // Alternative approach - send a refresh request to the server
+      const response = await fetch('/api/auth/session/refresh', {
+        method: 'POST',
+        credentials: 'include', 
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        console.warn('Session refresh failed:', await response.text());
+        return false;
+      }
+      
+      // Retry getting the session
+      await authClient.getSession();
+      return true;
+    }
+    return false;
   } catch (error) {
     console.error('Failed to refresh session:', error);
     return false;

@@ -24,13 +24,37 @@ const updatePlanTemplateSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     // Get the current user's session
-    const session = await auth.api.getSession({
+    const sessionResult = await auth.api.getSession({
       headers: request.headers,
     });
     
-    if (!session) {
+    if (!sessionResult) {
+      // Get debug info
+      const headerEntries = Array.from(request.headers.entries());
+      const headers = Object.fromEntries(headerEntries);
+      
+      // Get cookies for debugging (but mask values)
+      const cookies = request.cookies.getAll().map(cookie => ({
+        name: cookie.name,
+        // Only show first few chars of value for security
+        value: cookie.value.substring(0, 4) + '...',
+      }));
+      
+      console.warn('Authentication failed - session info:', { 
+        headers,
+        cookieNames: cookies.map(c => c.name),
+        url: request.url
+      });
+      
       return new NextResponse(
-        JSON.stringify({ error: "Not authenticated" }),
+        JSON.stringify({ 
+          error: "Not authenticated", 
+          debug: {
+            hasHeaders: Object.keys(headers).length > 0,
+            hasCookies: cookies.length > 0,
+            cookieNames: cookies.map(c => c.name)
+          }
+        }),
         { 
           status: 401,
           headers: {
@@ -40,9 +64,9 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    const userId = session.user.id;
+    const userId = sessionResult.user.id;
     // Get organization ID from session
-    const organizationId = session.activeOrganizationId;
+    const organizationId = sessionResult.session.activeOrganizationId;
     
     if (!db) {
       console.error("Database not initialized");
