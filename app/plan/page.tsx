@@ -1,6 +1,6 @@
 "use client"
 
-import { PlanUI } from "./plan"
+import PlanUI from "./plan"
 import { SidebarProvider } from "@/components/ui/sidebar"
 
 export default function PlanPage() {
