@@ -37,6 +37,8 @@ export function usePlanTemplates() {
   const createTemplate = async (title: string, description?: string) => {
     try {
       setLoading(true);
+      console.log("Creating template with:", { title, description });
+      
       const response = await fetch('/api/plan-templates', {
         method: 'POST',
         headers: {
@@ -48,12 +50,24 @@ export function usePlanTemplates() {
         }),
       });
       
+      console.log("Response status:", response.status);
+      
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create template');
+        let errorData;
+        try {
+          errorData = await response.json();
+          console.error("Error response data:", errorData);
+        } catch (parseError) {
+          console.error("Error parsing response:", parseError);
+          errorData = { error: `HTTP error ${response.status}` };
+        }
+        
+        throw new Error(errorData.error || errorData.details || `Failed to create template (${response.status})`);
       }
       
       const data = await response.json();
+      console.log("Success response:", data);
+      
       setTemplates((prev) => [...prev, data.template]);
       toast({
         title: 'Success',
@@ -61,6 +75,7 @@ export function usePlanTemplates() {
       });
       return data.template;
     } catch (err) {
+      console.error("Error in createTemplate:", err);
       toast({
         title: 'Error',
         description: err instanceof Error ? err.message : 'Failed to create template',

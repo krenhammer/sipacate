@@ -293,7 +293,7 @@ export default function PlanTemplateDetail() {
   }
 
   return (
-    <div className="container py-6">
+    <div className="container p-5">
       <div className="flex items-center mb-6">
         <Button variant="outline" asChild className="mr-4">
           <Link href="/plan-template">

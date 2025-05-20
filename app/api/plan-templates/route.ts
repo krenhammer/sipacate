@@ -5,6 +5,7 @@ import { planTemplates, planSteps, planItems, planStepItems } from "@/database/s
 import { eq, and, asc } from "drizzle-orm";
 import { z } from "zod";
 import { generateId } from "@/lib/utils";
+import { nanoid } from "nanoid"; // Import nanoid as a backup
 
 // Schema for creating a plan template
 const createPlanTemplateSchema = z.object({
@@ -33,7 +34,16 @@ export async function GET(request: NextRequest) {
     }
     
     const userId = session.user.id;
-    const organizationId = session.user.activeOrganizationId;
+    // Get organization ID from session
+    const organizationId = session.activeOrganizationId;
+    
+    if (!db) {
+      console.error("Database not initialized");
+      return new NextResponse(
+        JSON.stringify({ error: "Database error" }),
+        { status: 500 }
+      );
+    }
     
     let templates;
     
@@ -107,13 +117,26 @@ export async function POST(request: NextRequest) {
     
     const { title, description, organizationId } = result.data;
     
+    // Check if db is available
+    if (!db) {
+      return new NextResponse(
+        JSON.stringify({ error: "Database connection error" }),
+        { status: 500 }
+      );
+    }
+    
     // Create a new plan template
+    const id = generateId();
+    const now = new Date();
+    
     const [newTemplate] = await db.insert(planTemplates).values({
-      id: generateId(),
+      id,
       title,
-      description,
+      description: description || null,
       createdById: userId,
       organizationId: organizationId || null,
+      createdAt: now,
+      updatedAt: now
     }).returning();
     
     return NextResponse.json({ template: newTemplate }, { status: 201 });
@@ -143,6 +166,8 @@ export async function PUT(request: NextRequest) {
     }
     
     const userId = session.user.id;
+    // Get organization ID from session
+    const organizationId = session.activeOrganizationId;
     
     // Parse the request body
     const body = await request.json();
@@ -167,6 +192,15 @@ export async function PUT(request: NextRequest) {
       );
     }
     
+    // Check for database connection
+    if (!db) {
+      console.error("Database connection is null");
+      return new NextResponse(
+        JSON.stringify({ error: "Database connection error" }),
+        { status: 500 }
+      );
+    }
+    
     // Check if the template exists and belongs to the user
     const existingTemplate = await db.query.planTemplates.findFirst({
       where: eq(planTemplates.id, body.id),
@@ -180,7 +214,8 @@ export async function PUT(request: NextRequest) {
     }
     
     // Check if the user owns the template or belongs to the organization
-    if (existingTemplate.createdById !== userId && (!session.user.activeOrganizationId || existingTemplate.organizationId !== session.user.activeOrganizationId)) {
+    if (existingTemplate.createdById !== userId && 
+        (!organizationId || existingTemplate.organizationId !== organizationId)) {
       return new NextResponse(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 403 }
@@ -223,6 +258,8 @@ export async function DELETE(request: NextRequest) {
     }
     
     const userId = session.user.id;
+    // Get organization ID from session
+    const organizationId = session.activeOrganizationId;
     
     // Get the template ID from the URL
     const url = new URL(request.url);
@@ -232,6 +269,15 @@ export async function DELETE(request: NextRequest) {
       return new NextResponse(
         JSON.stringify({ error: "Template ID is required" }),
         { status: 400 }
+      );
+    }
+    
+    // Check for database connection
+    if (!db) {
+      console.error("Database connection is null");
+      return new NextResponse(
+        JSON.stringify({ error: "Database connection error" }),
+        { status: 500 }
       );
     }
     
@@ -248,7 +294,8 @@ export async function DELETE(request: NextRequest) {
     }
     
     // Check if the user owns the template or belongs to the organization
-    if (existingTemplate.createdById !== userId && (!session.user.activeOrganizationId || existingTemplate.organizationId !== session.user.activeOrganizationId)) {
+    if (existingTemplate.createdById !== userId && 
+        (!organizationId || existingTemplate.organizationId !== organizationId)) {
       return new NextResponse(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 403 }

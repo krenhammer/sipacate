@@ -22,7 +22,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "stripe:local": "stripe listen --events checkout.session.completed,customer.subscription.updated,customer.subscription.deleted --forward-to http://localhost:3000/api/auth/stripe/webhook",
-    "stripe:seed": "bun .stripe/stripe-seed.ts"
+    "stripe:seed": "bun .stripe/stripe-seed.ts",
+    "browser-tools": "npx @agentdeskai/browser-tools-server@latest"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.10.6",
