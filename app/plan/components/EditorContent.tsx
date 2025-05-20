@@ -3,45 +3,50 @@ import { useSnapshot } from "valtio"
 import { Separator } from "@/components/ui/separator"
 import { planState } from "../store/planState"
 import { Step, Document } from "../types"
-import { ReactEditor } from 'marktion';
-import type { Marktion, ReactEditorRef } from 'marktion';
-
+import type { ReactEditorRef } from 'marktion';
+import MarkdownEditorAdapter from "./MarkdownEditorAdapter";
 
 export function EditorContent() {
   const { selectedNode } = useSnapshot(planState)
   const [content, setContent] = useState("")
   const ref = useRef<ReactEditorRef>(null);
 
-
   // Update content when selectedNode changes
   useEffect(() => {
     if (selectedNode) {
+      let newContent = "";
       if (selectedNode.type === 'step') {
-        ref?.current?.editor.setContent((selectedNode.data as Step).result || "")
+        newContent = (selectedNode.data as Step).result || "";
       } else {
-        ref?.current?.editor.setContent((selectedNode.data as Document).content || "")
+        newContent = (selectedNode.data as Document).content || "";
+      }
+      
+      setContent(newContent);
+      
+      // Also ensure the editor has the content
+      if (ref?.current?.editor) {
+        ref.current.editor.setContent(newContent);
       }
     } else {
-      setContent("")
+      setContent("");
     }
   }, [selectedNode])
 
   // Save content to state when it changes
-  const handleChange = (editor: Marktion) => {
+  const handleChange = (editor: any) => {
     const newContent = editor.getContent()
     setContent(newContent)
 
-    // if (selectedNode && planState.selectedNode) {
-    //   if (selectedNode.type === 'step') {
-    //     (planState.selectedNode.data as Step).result = newContent
-    //     planState.selectedNode.data.updated = Date.now()
-    //   } else if (selectedNode.type === 'document') {
-    //     (planState.selectedNode.data as Document).content = newContent
-    //     planState.selectedNode.data.updated = Date.now()
-    //   }
-    // }
+    if (selectedNode && planState.selectedNode) {
+      if (selectedNode.type === 'step') {
+        (planState.selectedNode.data as Step).result = newContent
+        planState.selectedNode.data.updated = Date.now()
+      } else if (selectedNode.type === 'document') {
+        (planState.selectedNode.data as Document).content = newContent
+        planState.selectedNode.data.updated = Date.now()
+      }
+    }
   }
-
 
   // const getEditorContent = (): string => {
   //   if (!selectedNode) return ""
@@ -82,14 +87,17 @@ export function EditorContent() {
   return (
     <div className="flex-1 p-6 overflow-auto">
       <div className="h-full flex flex-col">
-
-        {selectedNode && selectedNode.type === 'step' && (selectedNode.data as Step).result &&
-          <div className="p-6 rounded-md  overflow-auto">
-            <ReactEditor content={content} onChange={handleChange} ref={ref} className="border-0 dark:gray-500 p-2 rounded-lg select-none" />
+        {selectedNode && selectedNode.type === 'step' && 
+          <div className="p-6 rounded-md overflow-auto">
+            <MarkdownEditorAdapter 
+              content={content} 
+              onChange={handleChange} 
+              ref={ref} 
+              className="border-0 dark:gray-500 p-2 rounded-lg select-none"
+              render="WYSIWYG"
+            />
           </div>
         }
-
-
       </div>
     </div>
   )
