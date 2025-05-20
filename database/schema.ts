@@ -209,3 +209,64 @@ export const assistantFiles = pgTable("assistant_file", {
     createdAt: createdAtColumn,
     updatedAt: updatedAtColumn
 });
+
+// Plan Template Schema
+export const planTemplates = pgTable("plan_template", {
+    id: idColumn,
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    createdById: varchar("created_by", { length: 255 })
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    organizationId: varchar("organization_id", { length: 255 })
+        .references(() => organizations.id, { onDelete: "set null" }),
+    createdAt: createdAtColumn,
+    updatedAt: updatedAtColumn
+});
+
+export const planSteps = pgTable("plan_step", {
+    id: idColumn,
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    planTemplateId: varchar("plan_template_id", { length: 255 })
+        .notNull()
+        .references(() => planTemplates.id, { onDelete: "cascade" }),
+    createdById: varchar("created_by", { length: 255 })
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    organizationId: varchar("organization_id", { length: 255 })
+        .references(() => organizations.id, { onDelete: "set null" }),
+    createdAt: createdAtColumn,
+    updatedAt: updatedAtColumn
+});
+
+export const planItems = pgTable("plan_item", {
+    id: idColumn,
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    type: varchar("type", { length: 50 }).notNull(), // List, Document
+    instructions: text("instructions"),
+    systemPrompt: text("system_prompt"),
+    userPrompt: text("user_prompt"),
+    createdById: varchar("created_by", { length: 255 })
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    organizationId: varchar("organization_id", { length: 255 })
+        .references(() => organizations.id, { onDelete: "set null" }),
+    createdAt: createdAtColumn,
+    updatedAt: updatedAtColumn
+});
+
+// Junction table to maintain order of plan items in a step
+export const planStepItems = pgTable("plan_step_item", {
+    id: idColumn,
+    planStepId: varchar("plan_step_id", { length: 255 })
+        .notNull()
+        .references(() => planSteps.id, { onDelete: "cascade" }),
+    planItemId: varchar("plan_item_id", { length: 255 })
+        .notNull()
+        .references(() => planItems.id, { onDelete: "cascade" }),
+    order: integer("order").notNull(),
+    createdAt: createdAtColumn,
+    updatedAt: updatedAtColumn
+});

@@ -14,6 +14,7 @@ import { AnonymousUserButton } from "./anonymous-user-button"
 import { InvitationIndicator } from "./invitation-indicator"
 import { SessionSwitcher } from "./session-switcher"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
+import { ListChecks } from "lucide-react"
 
 export function Header() {
     const { data: session } = useSession()
@@ -105,6 +106,22 @@ export function Header() {
                                                 </TooltipTrigger>
                                                 <TooltipContent>
                                                     <p>Plan</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                        
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Link href="/plan-template">
+                                                        <Button variant="ghost" size="icon" className="size-8 rounded-full">
+                                                            <ListChecks className="h-4 w-4" />
+                                                            <span className="sr-only">Plan Templates</span>
+                                                        </Button>
+                                                    </Link>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    <p>Plan Templates</p>
                                                 </TooltipContent>
                                             </Tooltip>
                                         </TooltipProvider>

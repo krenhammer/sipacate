@@ -7,14 +7,21 @@ import {
   teams, 
   teamMembers,
   assistants,
-  assistantFiles
+  assistantFiles,
+  planTemplates,
+  planSteps,
+  planItems,
+  planStepItems
 } from './schema';
 
 export const organizationsRelations = relations(organizations, ({ many }) => ({
   members: many(members),
   invitations: many(invitations),
   teams: many(teams),
-  assistants: many(assistants)
+  assistants: many(assistants),
+  planTemplates: many(planTemplates),
+  planSteps: many(planSteps),
+  planItems: many(planItems)
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
@@ -62,7 +69,10 @@ export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   members: many(members),
   invitations: many(invitations, { relationName: 'inviter' }),
-  assistants: many(assistants, { relationName: 'creator' })
+  assistants: many(assistants, { relationName: 'creator' }),
+  planTemplates: many(planTemplates),
+  planSteps: many(planSteps),
+  planItems: many(planItems)
 }));
 
 // Assistant relations
@@ -83,5 +93,57 @@ export const assistantFilesRelations = relations(assistantFiles, ({ one }) => ({
   assistant: one(assistants, {
     fields: [assistantFiles.assistantId],
     references: [assistants.id]
+  })
+}));
+
+// Plan Template Relations
+export const planTemplatesRelations = relations(planTemplates, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [planTemplates.createdById],
+    references: [users.id]
+  }),
+  organization: one(organizations, {
+    fields: [planTemplates.organizationId],
+    references: [organizations.id]
+  }),
+  steps: many(planSteps)
+}));
+
+export const planStepsRelations = relations(planSteps, ({ one, many }) => ({
+  planTemplate: one(planTemplates, {
+    fields: [planSteps.planTemplateId],
+    references: [planTemplates.id]
+  }),
+  creator: one(users, {
+    fields: [planSteps.createdById],
+    references: [users.id]
+  }),
+  organization: one(organizations, {
+    fields: [planSteps.organizationId],
+    references: [organizations.id]
+  }),
+  planStepItems: many(planStepItems)
+}));
+
+export const planItemsRelations = relations(planItems, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [planItems.createdById],
+    references: [users.id]
+  }),
+  organization: one(organizations, {
+    fields: [planItems.organizationId],
+    references: [organizations.id]
+  }),
+  planStepItems: many(planStepItems)
+}));
+
+export const planStepItemsRelations = relations(planStepItems, ({ one }) => ({
+  planStep: one(planSteps, {
+    fields: [planStepItems.planStepId],
+    references: [planSteps.id]
+  }),
+  planItem: one(planItems, {
+    fields: [planStepItems.planItemId],
+    references: [planItems.id]
   })
 })); 

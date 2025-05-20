@@ -1,6 +1,6 @@
 # Plan Templates (/plan-template)
 
-Create a way for Users to CRUD plan Tempates which consit of plan steps each with plan item children
+Create a way for Users to CRUD Plan Templates which consist of plan steps each with plan item children
 
     - Drizzle migration for persistance to db
     - CRUD API (zod validation)
