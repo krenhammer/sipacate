@@ -658,7 +658,7 @@ export default function PlanTemplateDetail() {
                   </FormItem>
                 )}
               />
-              {itemForm.watch("type") === "Document" && (
+               
                 <>
                   <FormField
                     control={itemForm.control}
@@ -693,7 +693,7 @@ export default function PlanTemplateDetail() {
                     )}
                   />
                 </>
-              )}
+              
               <DialogFooter>
                 <Button type="submit">Add Item</Button>
               </DialogFooter>
