@@ -2,6 +2,7 @@
 
 import { GitHubIcon, UserButton } from "@daveyplate/better-auth-ui"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 import { useAdminStatus, useSession } from "@/hooks/use-auth-hooks"
 import { ModeToggle } from "./mode-toggle"
@@ -15,6 +16,7 @@ import { InvitationIndicator } from "./invitation-indicator"
 import { SessionSwitcher } from "./session-switcher"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip"
 import { ListChecks } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export function Header() {
     const { data: session } = useSession()
@@ -22,6 +24,11 @@ export function Header() {
     const isEmailVerified = session?.user?.emailVerified
     const isAnonymous = session?.user?.isAnonymous
     const isManager = session?.user?.role === "manager" || session?.user?.role === "mgr" || isAdmin
+    const pathname = usePathname()
+    
+    const isPathActive = (path: string) => {
+        return pathname?.startsWith(path)
+    }
     
     return (
         <header className="sticky top-0 z-50 border-b bg-background/60 px-4 py-3 backdrop-blur">
@@ -83,7 +90,7 @@ export function Header() {
                                                 <TooltipTrigger asChild>
                                                     <Link href="/assistant">
                                                         <Button variant="ghost" size="icon" className="size-8 rounded-full">
-                                                            <BotIcon className="h-4 w-4" />
+                                                            <BotIcon className={cn("h-4 w-4", !isPathActive("/assistant") && "opacity-50")} />
                                                             <span className="sr-only">Assistant</span>
                                                         </Button>
                                                     </Link>
@@ -99,7 +106,7 @@ export function Header() {
                                                 <TooltipTrigger asChild>
                                                     <Link href="/plan">
                                                         <Button variant="ghost" size="icon" className="size-8 rounded-full">
-                                                            <IoMdChatbubbles className="h-4 w-4" />
+                                                            <IoMdChatbubbles className={cn("h-4 w-4", !isPathActive("/plan") && "opacity-50")} />
                                                             <span className="sr-only">Plan</span>
                                                         </Button>
                                                     </Link>
@@ -115,7 +122,7 @@ export function Header() {
                                                 <TooltipTrigger asChild>
                                                     <Link href="/plan-template">
                                                         <Button variant="ghost" size="icon" className="size-8 rounded-full">
-                                                            <ListChecks className="h-4 w-4" />
+                                                            <ListChecks className={cn("h-4 w-4", !isPathActive("/plan-template") && "opacity-50")} />
                                                             <span className="sr-only">Plan Templates</span>
                                                         </Button>
                                                     </Link>
