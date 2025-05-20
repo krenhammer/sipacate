@@ -4,6 +4,7 @@ import { createStep, createDocument } from "../utils"
 
 // Create the state store with valtio
 export const planState = proxy({
+  currentStep: "identify-buyers",
   steps: [
     {
       id: "icp",
@@ -92,7 +93,7 @@ No-code/low-code AI agents for internal ops:
             instructions: "# Identify Your Buyers\n\nList the key decision makers and influencers.",
             systemPrompt: "You are a B2B sales expert.",
             userPrompt: "Help me identify the key decision makers for my product.",
-            result: "",
+            result: "Something",
             created: Date.now(),
             updated: Date.now()
           }
