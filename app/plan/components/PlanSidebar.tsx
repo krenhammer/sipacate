@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react"
 import { useSnapshot } from "valtio"
-import { ChevronLeft, ChevronRight, Clock, Layers } from "lucide-react"
+import { ChevronLeft, ChevronRight, Clock, Layers, FileText } from "lucide-react"
 import { Tree } from "react-arborist"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -20,12 +20,14 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-
+import Link from "next/link"
+import { planTemplateState } from "@/app/plan-template/store/planTemplateState"
 import { planState } from "../store/planState"
 import { NodeComponent } from "./NodeComponent"
 
 export function PlanSidebar() {
   const { steps, sidebarCollapsed } = useSnapshot(planState)
+  const { selectedTemplate } = useSnapshot(planTemplateState)
   const [activeTab, setActiveTab] = useState<string>("steps")
   const treeRef = useRef(null)
   const [lastOpenId, setLastOpenId] = useState<string | null>(null)
@@ -85,6 +87,20 @@ export function PlanSidebar() {
         </SidebarHeader> */}
         
         <SidebarContent className="mt-20 mx-2 h-full">
+          {/* Current Plan Template Button */}
+          {selectedTemplate && (
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start mb-2 text-sm"
+              asChild
+            >
+              <Link href={`/plan-template/${selectedTemplate.id}`}>
+                <FileText className="h-4 w-4 mr-2" />
+                {selectedTemplate.title}
+              </Link>
+            </Button>
+          )}
+          
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="steps">

@@ -8,7 +8,7 @@ import { usePlanItems } from "../hooks/usePlanItems";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
-import { ArrowLeft, PlusCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, PlusCircle, ChevronDown, ChevronUp, Edit } from "lucide-react";
 import Link from "next/link";
 import { YamlExportButton } from "../components/yaml-export-import";
 import { StepCard } from "./components/StepCard";
@@ -226,33 +226,19 @@ export default function PlanTemplateDetail() {
     await reorderItems(stepId, updatedItems);
   };
 
-  if (loadingTemplate || stepsLoading) {
-    return (
-      <div className="container py-12">
-        <div className="flex justify-center items-center min-h-[60vh]">
-          <div className="animate-pulse">Loading template...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!template) {
-    return (
-      <div className="container py-12">
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
-          <h3 className="text-xl font-semibold mb-4">Template not found</h3>
-          <Button asChild>
-            <Link href="/plan-template">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Templates
-            </Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
+  // Calculate if all steps are expanded
   const areAllExpanded = steps.length > 0 && steps.every(step => expandedSteps[step.id]);
+
+  if (loadingTemplate || !template) {
+    return (
+      <div className="container p-5 flex justify-center items-center min-h-screen">
+        <div className="animate-pulse text-xl">Loading template...</div>
+      </div>
+    );
+  }
+
+  // Define the URL for editing the template
+  const editTemplateUrl = `/plan-template?editTemplate=${template.id}`;
   
   // Sort steps by order property
   const sortedSteps = [...steps].sort((a, b) => {
@@ -274,7 +260,12 @@ export default function PlanTemplateDetail() {
           <h1 className="text-3xl font-bold">{template.title}</h1>
           <p className="text-muted-foreground">{template.description || "No description"}</p>
         </div>
-        <div className="ml-4">
+        <div className="ml-4 flex space-x-2">
+          <Button variant="outline" size="icon" asChild>
+            <Link href={editTemplateUrl}>
+              <Edit className="h-4 w-4" />
+            </Link>
+          </Button>
           <YamlExportButton template={template} />
         </div>
       </div>
@@ -304,11 +295,15 @@ export default function PlanTemplateDetail() {
         </div>
       </div>
 
-      {steps.length === 0 ? (
+      {stepsLoading ? (
+        <div className="flex justify-center p-8">
+          <div className="animate-pulse">Loading steps...</div>
+        </div>
+      ) : steps.length === 0 ? (
         <div className="text-center p-12 border rounded-lg">
-          <h3 className="text-lg font-semibold">No steps yet</h3>
-          <p className="text-muted-foreground mb-4">Add your first step to get started</p>
-          <Button onClick={handleOpenCreateStepDialog}>
+          <h3 className="mt-4 text-lg font-semibold">No steps yet</h3>
+          <p className="text-muted-foreground">Add your first step to get started</p>
+          <Button onClick={handleOpenCreateStepDialog} className="mt-4">
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Step
           </Button>
@@ -335,7 +330,6 @@ export default function PlanTemplateDetail() {
         </div>
       )}
 
-      {/* Dialogs */}
       <StepDialog
         open={showCreateStepDialog}
         onOpenChange={setShowCreateStepDialog}
@@ -368,7 +362,7 @@ export default function PlanTemplateDetail() {
 
       <DeleteDialog
         open={!!deleteStepDialog}
-        onOpenChange={(open) => !open && setDeleteStepDialog(null)}
+        onOpenChange={(open: boolean) => !open && setDeleteStepDialog(null)}
         title="Delete Step"
         description="Are you sure you want to delete this step? This action cannot be undone and will also delete all associated items."
         onConfirm={handleDeleteStep}
@@ -376,7 +370,7 @@ export default function PlanTemplateDetail() {
 
       <DeleteDialog
         open={!!deleteItemDialog}
-        onOpenChange={(open) => !open && setDeleteItemDialog(null)}
+        onOpenChange={(open: boolean) => !open && setDeleteItemDialog(null)}
         title="Remove Item"
         description="Are you sure you want to remove this item from the step?"
         onConfirm={handleDeleteItem}
