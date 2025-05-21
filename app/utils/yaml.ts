@@ -1,6 +1,6 @@
 import * as yaml from 'js-yaml';
 import { PlanTemplate, PlanStep, PlanItem, PlanStepItem } from '../plan-template/types';
-import { Assistant, AssistantFile } from '../assistant/store';
+import { Assistant, AssistantFile } from '../assistant/assistantState';
 
 // Utility types for simplified versions suitable for YAML export/import
 export type ExportablePlanTemplate = Omit<PlanTemplate, 'createdAt' | 'updatedAt'> & {

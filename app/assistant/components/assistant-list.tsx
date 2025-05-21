@@ -4,14 +4,15 @@ import { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAssistants } from "../hooks/use-assistants";
-import { PencilIcon, TrashIcon, PlusIcon, FileIcon } from "lucide-react";
+import { PencilIcon, TrashIcon, PlusIcon, FileIcon, CheckIcon } from "lucide-react";
 import { AssistantDialog } from "./assistant-dialog";
 import { DeleteAssistantDialog } from "./delete-assistant-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { YamlExportButton } from "./yaml-export-import";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function AssistantList() {
-  const { assistants, isLoading, error, fetchAssistants } = useAssistants();
+  const { assistants, isLoading, error, fetchAssistants, selectedAssistant, selectAssistant } = useAssistants();
 
   useEffect(() => {
     fetchAssistants();
@@ -57,7 +58,26 @@ export function AssistantList() {
       {assistants.map((assistant) => (
         <Card key={assistant.id}>
           <CardHeader>
-            <CardTitle>{assistant.name}</CardTitle>
+            <div className="flex flex-row items-center justify-between">
+              <CardTitle>{assistant.name}</CardTitle>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => selectAssistant(assistant)}
+                    >
+                      <CheckIcon className="h-4 w-4 mr-2" />
+                      {selectedAssistant?.id === assistant.id ? "Selected" : "Select"}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Select this Assistant</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <CardDescription>{assistant.description}</CardDescription>
           </CardHeader>
           

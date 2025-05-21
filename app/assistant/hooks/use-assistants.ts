@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useSnapshot } from 'valtio';
-import { assistantStore, assistantActions, Assistant } from '../store';
+import { assistantState, assistantActions, Assistant } from '../assistantState';
 import { AssistantFormData } from '../types';
 
 export function useAssistants() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { assistants, selectedAssistant } = useSnapshot(assistantStore);
+  const { assistants, selectedAssistant } = useSnapshot(assistantState);
 
   const fetchAssistants = useCallback(async () => {
     setIsLoading(true);

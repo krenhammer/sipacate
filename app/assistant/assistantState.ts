@@ -30,7 +30,7 @@ interface AssistantState {
   error: string | null;
 }
 
-export const assistantStore = proxy<AssistantState>({
+export const assistantState = proxy<AssistantState>({
   assistants: [],
   selectedAssistant: null,
   isLoading: false,
@@ -39,41 +39,41 @@ export const assistantStore = proxy<AssistantState>({
 
 export const assistantActions = {
   setSelectedAssistant: (assistant: Assistant | null) => {
-    assistantStore.selectedAssistant = assistant;
+    assistantState.selectedAssistant = assistant;
   },
   
   setAssistants: (assistants: Assistant[]) => {
-    assistantStore.assistants = assistants;
+    assistantState.assistants = assistants;
   },
   
   addAssistant: (assistant: Assistant) => {
-    assistantStore.assistants.push(assistant);
+    assistantState.assistants.push(assistant);
   },
   
   updateAssistant: (updatedAssistant: Assistant) => {
-    const index = assistantStore.assistants.findIndex(a => a.id === updatedAssistant.id);
+    const index = assistantState.assistants.findIndex(a => a.id === updatedAssistant.id);
     if (index !== -1) {
-      assistantStore.assistants[index] = updatedAssistant;
+      assistantState.assistants[index] = updatedAssistant;
     }
     
-    if (assistantStore.selectedAssistant?.id === updatedAssistant.id) {
-      assistantStore.selectedAssistant = updatedAssistant;
+    if (assistantState.selectedAssistant?.id === updatedAssistant.id) {
+      assistantState.selectedAssistant = updatedAssistant;
     }
   },
   
   deleteAssistant: (id: string) => {
-    assistantStore.assistants = assistantStore.assistants.filter(a => a.id !== id);
+    assistantState.assistants = assistantState.assistants.filter(a => a.id !== id);
     
-    if (assistantStore.selectedAssistant?.id === id) {
-      assistantStore.selectedAssistant = null;
+    if (assistantState.selectedAssistant?.id === id) {
+      assistantState.selectedAssistant = null;
     }
   },
   
   setLoading: (loading: boolean) => {
-    assistantStore.isLoading = loading;
+    assistantState.isLoading = loading;
   },
   
   setError: (error: string | null) => {
-    assistantStore.error = error;
+    assistantState.error = error;
   }
 }; 
