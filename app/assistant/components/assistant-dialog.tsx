@@ -169,8 +169,10 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
             </div>
             
             <div className="grid gap-2">
-              <Label>Knowledge Files</Label>
-              <AssistantFileUpload onUpload={handleFileUpload} isLoading={isFileLoading} error={fileError} />
+              <div className="flex justify-between items-center">
+                <Label>Knowledge Files</Label>
+                <AssistantFileUpload onUpload={handleFileUpload} isLoading={isFileLoading} error={fileError} />
+              </div>
               <div className="border rounded-lg p-3 bg-muted/30">
                 <AssistantFileList 
                   files={files} 
