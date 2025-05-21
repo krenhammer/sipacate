@@ -34,6 +34,7 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
     removeFile, 
     clearFiles,
     updateFileContent,
+    addFile,
     isLoading: isFileLoading,
     error: fileError
   } = useFileUpload();
@@ -46,13 +47,23 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
   // Initialize files if editing
   useEffect(() => {
     if (assistant?.files) {
-      // Clone files to avoid references to the original
+      // First clear any existing files
+      clearFiles();
+      
+      // Then add each file from the assistant
       assistant.files.forEach(file => {
         const { id, assistantId, createdAt, updatedAt, ...rest } = file;
-        removeFile(rest.filename);
+        const fileData = {
+          filename: file.filename,
+          content: file.content,
+          fileType: file.fileType,
+          size: file.size || 0,
+          type: file.fileType
+        };
+        addFile(fileData);
       });
     }
-  }, [assistant, removeFile]);
+  }, [assistant, clearFiles, addFile]);
   
   const isEdit = !!assistant;
 
@@ -160,11 +171,13 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
             <div className="grid gap-2">
               <Label>Knowledge Files</Label>
               <AssistantFileUpload onUpload={handleFileUpload} isLoading={isFileLoading} error={fileError} />
-              <AssistantFileList 
-                files={files} 
-                onRemove={removeFile} 
-                onUpdateContent={updateFileContent}
-              />
+              <div className="border rounded-lg p-3 bg-muted/30">
+                <AssistantFileList 
+                  files={files} 
+                  onRemove={removeFile} 
+                  onUpdateContent={updateFileContent}
+                />
+              </div>
             </div>
           </div>
           

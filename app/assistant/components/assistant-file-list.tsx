@@ -7,12 +7,14 @@ import {
   FileText, 
   FileImage, 
   FileType,
-  X
+  X,
+  Edit
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { TiptapMarkdownEditor } from "@/app/plan/components/TiptapMarkdownEditor";
 import { toast } from "sonner";
+import { DeleteFileDialog } from "./delete-file-dialog";
 
 interface FileItem {
   id?: string;
@@ -36,13 +38,13 @@ export function AssistantFileList({ files, onRemove, onUpdateContent }: Assistan
   const getFileIcon = (file: FileItem) => {
     const extension = file.filename.split('.').pop()?.toLowerCase();
     
-    if (extension === 'pdf') return <FileType className="h-5 w-5 text-red-500" />;
+    if (extension === 'pdf') return <FileType className="h-4 w-4 text-red-500" />;
     if (['jpg', 'jpeg', 'png', 'gif'].includes(extension || '')) 
-      return <FileImage className="h-5 w-5 text-blue-500" />;
+      return <FileImage className="h-4 w-4 text-blue-500" />;
     if (['md', 'txt', 'doc', 'docx'].includes(extension || '')) 
-      return <FileText className="h-5 w-5 text-green-500" />;
+      return <FileText className="h-4 w-4 text-green-500" />;
     
-    return <File className="h-5 w-5 text-gray-500" />;
+    return <File className="h-4 w-4 text-gray-500" />;
   };
 
   const formatFileSize = (bytes: number) => {
@@ -51,10 +53,13 @@ export function AssistantFileList({ files, onRemove, onUpdateContent }: Assistan
     return (bytes / 1048576).toFixed(1) + ' MB';
   };
 
-  const handleFileClick = (file: FileItem) => {
-    // Only allow editing text-based files
+  const isEditable = (file: FileItem) => {
     const extension = file.filename.split('.').pop()?.toLowerCase();
-    if (!['md', 'txt'].includes(extension || '')) {
+    return ['md', 'txt'].includes(extension || '');
+  };
+
+  const handleFileEdit = (file: FileItem) => {
+    if (!isEditable(file)) {
       toast.error("Only markdown and text files can be edited");
       return;
     }
@@ -82,33 +87,50 @@ export function AssistantFileList({ files, onRemove, onUpdateContent }: Assistan
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+      <div className="space-y-2">
         {files.map((file) => (
           <div 
             key={file.filename}
-            className="flex flex-col items-center justify-center p-3 border rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
-            onClick={() => handleFileClick(file)}
+            className="flex items-center justify-between py-2 px-3 border rounded-md group hover:bg-muted/30 transition-colors"
           >
-            <div className="flex flex-col items-center text-center gap-1">
+            <div className="flex items-center gap-2 overflow-hidden">
               {getFileIcon(file)}
-              <span className="text-xs font-medium truncate w-full">
+              <span className="text-sm font-medium truncate">
                 {file.filename}
               </span>
               <span className="text-xs text-muted-foreground">
-                {formatFileSize(file.size)}
+                ({formatFileSize(file.size)})
               </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 rounded-full"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove(file.filename);
-                }}
+            </div>
+            
+            <div className="flex items-center gap-1">
+              {isEditable(file) && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 opacity-70 hover:opacity-100"
+                  onClick={() => handleFileEdit(file)}
+                >
+                  <Edit className="h-3.5 w-3.5" />
+                  <span className="sr-only">Edit</span>
+                </Button>
+              )}
+              
+              <DeleteFileDialog 
+                filename={file.filename} 
+                onDelete={onRemove}
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 opacity-70 hover:opacity-100"
+                >
+                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                  <span className="sr-only">Delete</span>
+                </Button>
+              </DeleteFileDialog>
             </div>
           </div>
         ))}

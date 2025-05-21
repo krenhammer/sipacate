@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { useSnapshot } from "valtio"
 import { ChevronLeft, ChevronRight, Clock, Layers } from "lucide-react"
 import { Tree } from "react-arborist"
@@ -27,10 +27,37 @@ import { NodeComponent } from "./NodeComponent"
 export function PlanSidebar() {
   const { steps, sidebarCollapsed } = useSnapshot(planState)
   const [activeTab, setActiveTab] = useState<string>("steps")
+  const treeRef = useRef(null)
+  const [lastOpenId, setLastOpenId] = useState<string | null>(null)
+
+  // Custom handler for toggling nodes
+  const handleToggle = (id: string) => {
+    if (!treeRef.current) return
+
+    const tree = treeRef.current
+    
+    // Check if the node is already open
+    const isCurrentlyOpen = tree.isOpen(id)
+    
+    // If we're opening a node, close the previously open one first
+    if (!isCurrentlyOpen && lastOpenId && lastOpenId !== id) {
+      tree.close(lastOpenId)
+    }
+    
+    // Toggle the clicked node
+    tree.toggle(id)
+    
+    // Update the last open ID if we just opened a node
+    if (!isCurrentlyOpen) {
+      setLastOpenId(id)
+    } else if (id === lastOpenId) {
+      setLastOpenId(null)
+    }
+  }
 
   return (
-    <div className={`border-r transition-all ${sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-64'}`}>
-      <Sidebar>
+    <div className={`border-r transition-all ${sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-64'} h-full`}>
+      <Sidebar className="h-full">
         {/* <SidebarHeader className="mt-20">
           <SidebarMenu>
             <SidebarMenuItem className="flex justify-between items-center w-full">
@@ -57,8 +84,8 @@ export function PlanSidebar() {
           </SidebarMenu>
         </SidebarHeader> */}
         
-        <SidebarContent className="mt-20 mx-2">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <SidebarContent className="mt-20 mx-2 h-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="steps">
                 <Layers className="h-4 w-4 mr-2" />
@@ -73,22 +100,23 @@ export function PlanSidebar() {
             <TabsContent value="steps" className="mt-2">
               <ScrollArea className="h-full">
                 <Tree
+                  ref={treeRef}
                   data={steps}
                   openByDefault={false}
                   width="100%"
-                  height={500}
                   indent={16}
                   rowHeight={28}
                   paddingTop={10}
                   paddingBottom={10}
                   className="w-full"
+                  onToggle={handleToggle}
                 >
                   {NodeComponent}
                 </Tree>
               </ScrollArea>
             </TabsContent>
             
-            <TabsContent value="history" className="mt-2">
+            <TabsContent value="history" className="mt-2 h-full">
               <ScrollArea className="h-full">
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-4 pb-2 border-b">

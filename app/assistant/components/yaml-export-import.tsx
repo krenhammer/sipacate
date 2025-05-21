@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAssistants } from '../hooks/use-assistants';
 import { toast } from 'sonner';
+import { createAssistantSchema } from '../types';
 
 export function YamlExportButton({ assistant }: { assistant: Assistant }) {
   const handleExport = () => {
@@ -52,6 +53,22 @@ export function YamlImportButton() {
     }
   };
 
+  // Convert fileType values to match allowed enum values
+  const normalizeFileType = (fileType: string): "md" | "docx" | "image" | "pdf" | "txt" => {
+    // Map common variations to expected values
+    if (fileType === "markdown") return "md";
+    if (["doc", "docx"].includes(fileType)) return "docx";
+    if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileType)) return "image";
+    
+    // For types already matching our enum, return as is if valid
+    if (["md", "docx", "image", "pdf", "txt"].includes(fileType)) {
+      return fileType as "md" | "docx" | "image" | "pdf" | "txt";
+    }
+    
+    // Default to txt for unknown types
+    return "txt";
+  };
+
   const handleImport = async () => {
     if (!fileInputRef.current?.files?.length) {
       toast.error('Please select a file');
@@ -64,18 +81,33 @@ export function YamlImportButton() {
       const yamlContent = await readYAMLFile(file);
       const assistant = importAssistantFromYAML(yamlContent);
       
-      // Create a new assistant with the imported data
-      // We need to extract only the fields that are expected by the API
-      const result = await createAssistant({
-        name: assistant.name,
-        description: assistant.description,
-        instructions: assistant.instructions,
-        knowledge: assistant.knowledge,
-        // Files will be handled separately if needed
+      // Process files from the YAML with normalized fileType
+      const files = assistant.files?.map(file => ({
+        filename: file.filename,
+        content: file.content,
+        fileType: normalizeFileType(file.fileType),
+        size: file.content.length // Approximate size based on content length
+      })) || [];
+      
+      // Make the API call directly with the post body structured according to createAssistantSchema
+      const response = await fetch('/api/assistants', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: assistant.name,
+          description: assistant.description,
+          instructions: assistant.instructions,
+          knowledge: assistant.knowledge,
+          files: files
+        })
       });
       
-      if (!result) {
-        throw new Error('Failed to create assistant');
+      const result = await response.json();
+      
+      if (result.error) {
+        throw new Error(result.error);
       }
       
       toast.success('Assistant imported successfully');
@@ -84,7 +116,7 @@ export function YamlImportButton() {
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {
       console.error('Import failed:', error);
-      toast.error('Failed to import assistant');
+      toast.error(`Failed to import assistant: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsImporting(false);
     }
