@@ -1,0 +1,475 @@
+id: marketing-assistant-123
+name: Product Marketing Assistant
+description: A specialized marketing assistant that helps with product positioning, market research, customer segmentation, and brand strategy for Sipacate.
+instructions: >
+  You are a product marketing specialist with expertise in SaaS and tech products.
+  When answering questions:
+  1. Focus on customer-centric approaches
+  2. Provide actionable marketing strategies
+  3. Consider market positioning and differentiation
+  4. Help identify target audiences and market segments
+  5. Suggest practical implementation steps for marketing initiatives
+knowledge: >
+  This assistant has knowledge of product marketing fundamentals, go-to-market strategies, 
+  customer persona development, competitive positioning, brand messaging, and content marketing
+  specifically tailored for Sipacate's product offerings.
+organizationId: null
+createdById: user-123456
+createdAt: "2023-11-10T12:00:00.000Z"
+updatedAt: "2023-11-10T12:00:00.000Z"
+files:
+  - id: file-001
+    assistantId: marketing-assistant-123
+    content: |
+      # Minimum Viable Product (MVP) Strategy Guide
+
+      ## What is an MVP?
+      
+      An MVP is the version of a product with just enough features to satisfy early customers and provide feedback for future development. The key principles are:
+      
+      - Focus on core functionality that solves the primary customer problem
+      - Build quickly and efficiently with minimal resources
+      - Learn from real user feedback to guide future iterations
+      - Validate product-market fit before full investment
+      
+      ## Designing Sipacate's MVP
+      
+      For Sipacate's platform, the MVP should focus on:
+      
+      ### Core Features
+      
+      1. **Assistant Creation Tool**
+         - Basic assistant customization
+         - File upload for knowledge base
+         - Simple prompt engineering interface
+      
+      2. **Plan Template Builder**
+         - Basic template creation
+         - Step sequencing functionality
+         - Simple sharing capabilities
+      
+      3. **User Management**
+         - Simple organization structure
+         - Basic role-based permissions
+         - Invitation system for team members
+      
+      ### MVP Success Metrics
+      
+      - **User Engagement**: Weekly active users, feature usage rates
+      - **Retention**: 30-day retention rate for early adopters
+      - **Feedback Quality**: Actionable insights from user feedback
+      - **Time-to-Value**: How quickly users achieve their first success
+      - **Technical Performance**: System stability and response times
+      
+      ## Iterative Development Plan
+      
+      ### Phase 1: MVP Launch
+      - Release core functionality
+      - Onboard initial beta users
+      - Collect usage data and feedback
+      
+      ### Phase 2: Rapid Iteration
+      - Weekly sprints based on user feedback
+      - Prioritize features that address common pain points
+      - Improve UX based on observed user behavior
+      
+      ### Phase 3: Expansion
+      - Add secondary feature sets
+      - Explore integration opportunities
+      - Refine pricing model based on value metrics
+      
+      ## Common MVP Pitfalls to Avoid
+      
+      - Feature creep: Adding "nice-to-have" features before validating core functionality
+      - Perfectionism: Delaying launch to polish features that aren't critical
+      - Ignoring feedback: Not acting on early user insights
+      - Poor onboarding: Making it difficult for early users to get started
+      - Undefined success criteria: Not knowing what "success" looks like for your MVP
+    filename: mvp-strategy.md
+    fileType: markdown
+    createdAt: "2023-11-10T12:00:00.000Z"
+    updatedAt: "2023-11-10T12:00:00.000Z"
+  - id: file-002
+    assistantId: marketing-assistant-123
+    content: |
+      # Buyer Personas for Sipacate
+
+      ## What are Buyer Personas?
+      
+      Buyer personas are semi-fictional representations of your ideal customers based on market research and real data about your existing customers. They help you understand and empathize with your target audience to create more effective marketing strategies.
+      
+      ## Primary Personas
+      
+      ### 1. Tech-Savvy Tina (Product Manager)
+      
+      **Demographics:**
+      - Age: 30-45
+      - Education: Bachelor's or Master's in Computer Science or Business
+      - Role: Product Manager at mid-sized SaaS company
+      - Income: $120,000-$160,000
+      
+      **Goals and Challenges:**
+      - Wants to leverage AI to enhance product capabilities quickly
+      - Struggles with the technical complexity of implementing AI features
+      - Needs to show quick wins to leadership team
+      - Looking for ways to differentiate product in competitive market
+      
+      **How Sipacate Helps:**
+      - Provides no-code AI assistant creation
+      - Enables rapid prototyping of AI-driven features
+      - Offers templates for common product use cases
+      - Supports evidence-based product development through user insights
+      
+      **Key Messages:**
+      - "Build AI-powered features without specialized ML expertise"
+      - "From concept to working prototype in days, not months"
+      - "Iterate based on real user interactions"
+      
+      ### 2. Developer Dan (Software Engineer)
+      
+      **Demographics:**
+      - Age: 25-40
+      - Education: Computer Science or self-taught
+      - Role: Full-stack developer or specialized AI engineer
+      - Income: $90,000-$140,000
+      
+      **Goals and Challenges:**
+      - Wants to focus on challenging technical problems, not boilerplate
+      - Needs to integrate AI capabilities quickly
+      - Struggles with the complexity of LLM prompt engineering
+      - Looking for ways to make AI systems more reliable
+      
+      **How Sipacate Helps:**
+      - Provides robust APIs for integration with existing systems
+      - Offers flexible customization options for technical users
+      - Handles infrastructure complexity automatically
+      - Makes prompt engineering more systematic and predictable
+      
+      **Key Messages:**
+      - "Stop wrestling with AI infrastructure and focus on building great features"
+      - "Eliminate prompt engineering guesswork with structured templates"
+      - "APIs that integrate seamlessly with your existing stack"
+      
+      ### 3. Executive Ellie (CTO/CIO)
+      
+      **Demographics:**
+      - Age: 40-55
+      - Education: Advanced degree in Computer Science or MBA
+      - Role: CTO, CIO, or VP Engineering
+      - Income: $180,000-$250,000+
+      
+      **Goals and Challenges:**
+      - Responsible for technology strategy and innovation roadmap
+      - Concerned about AI governance, security, and compliance
+      - Needs solutions that scale with enterprise needs
+      - Must balance innovation with practical implementation
+      
+      **How Sipacate Helps:**
+      - Offers enterprise-grade security and compliance features
+      - Provides organization-wide management and oversight
+      - Facilitates cross-team collaboration and knowledge sharing
+      - Delivers measurable ROI on AI investments
+      
+      **Key Messages:**
+      - "Enterprise-ready AI deployment with governance built-in"
+      - "Transform your organization with AI, without the enterprise complexity"
+      - "Secure, compliant, and scalable AI implementation"
+      
+      ## Secondary Personas
+      
+      ### 4. Marketing Maria (Marketing Manager)
+      
+      **Demographics:**
+      - Age: 28-45
+      - Education: Marketing, Business, or Communications degree
+      - Role: Marketing Manager or Director
+      - Income: $85,000-$130,000
+      
+      **Goals and Challenges:**
+      - Needs to create personalized customer experiences at scale
+      - Wants to automate repetitive content creation tasks
+      - Struggles to maintain consistent brand voice across channels
+      - Looking for ways to optimize marketing operations
+      
+      **How Sipacate Helps:**
+      - Enables creation of marketing-focused AI assistants
+      - Helps maintain brand consistency with customizable knowledge bases
+      - Automates routine customer interactions
+      - Provides insights into customer engagement
+      
+      **Key Messages:**
+      - "Maintain your brand voice while scaling personalized interactions"
+      - "Create marketing content in minutes, not days"
+      - "Free your team to focus on strategy, not repetitive tasks"
+    filename: buyer-personas.md
+    fileType: markdown
+    createdAt: "2023-11-10T12:00:00.000Z"
+    updatedAt: "2023-11-10T12:00:00.000Z"
+  - id: file-003
+    assistantId: marketing-assistant-123
+    content: |
+      # Ideal Customer Profile (ICP) for Sipacate
+
+      ## What is an Ideal Customer Profile?
+      
+      An Ideal Customer Profile defines the perfect company (not individual) that would receive significant value from your product while providing substantial value to your business. It helps focus marketing and sales efforts on the right target accounts.
+      
+      ## Sipacate's Primary ICPs
+      
+      ### 1. Growth-Stage SaaS Companies
+      
+      **Company Characteristics:**
+      - **Size:** 50-500 employees
+      - **Growth Rate:** 20%+ year-over-year
+      - **Funding Stage:** Series A to C
+      - **Revenue:** $5M-$50M ARR
+      - **Industries:** B2B SaaS, Martech, Fintech, Healthtech
+      
+      **Technology Profile:**
+      - Modern tech stack (React, Node.js, Python)
+      - Cloud-native infrastructure
+      - API-first architecture
+      - Already using some form of AI/ML but looking to expand
+      
+      **Business Drivers:**
+      - Competitive differentiation through AI features
+      - Need to scale customer support operations
+      - Improving product adoption and engagement
+      - Reducing development time for AI features
+      
+      **Decision Makers:**
+      - Product leadership (CPO, VP Product)
+      - Engineering leadership (CTO, VP Engineering)
+      - Innovation teams
+      
+      **Success Indicators:**
+      - Launches new AI-powered features within 4-6 weeks of implementation
+      - 20%+ reduction in customer support costs
+      - 15%+ improvement in user engagement metrics
+      
+      ### 2. Digital Transformation Enterprises
+      
+      **Company Characteristics:**
+      - **Size:** 1,000+ employees
+      - **Type:** Established companies undergoing digital transformation
+      - **Revenue:** $100M+
+      - **Industries:** Financial Services, Healthcare, Manufacturing, Retail
+      
+      **Technology Profile:**
+      - Mix of legacy and modern systems
+      - Increasing cloud adoption
+      - Established data infrastructure
+      - Beginning AI/ML experimentation
+      
+      **Business Drivers:**
+      - Modernizing customer experience
+      - Automating knowledge worker tasks
+      - Improving operational efficiency
+      - Competing with digital-native disruptors
+      
+      **Decision Makers:**
+      - Digital Transformation Officers
+      - Innovation Teams
+      - IT Leadership (CIO, CTO)
+      - Line of Business Executives
+      
+      **Success Indicators:**
+      - Successful proof-of-concept within 3 months
+      - 30%+ efficiency improvement in targeted workflows
+      - Measurable improvement in customer satisfaction metrics
+      - Expanded adoption across multiple departments
+      
+      ### 3. AI-Forward Startups
+      
+      **Company Characteristics:**
+      - **Size:** 10-50 employees
+      - **Stage:** Seed to Series A
+      - **Revenue:** Pre-revenue to $5M ARR
+      - **Industries:** Vertical SaaS, Consumer Tech, Developer Tools
+      
+      **Technology Profile:**
+      - Cutting-edge tech stack
+      - Built on cloud infrastructure
+      - API-centric architecture
+      - AI as core differentiator
+      
+      **Business Drivers:**
+      - Accelerating time-to-market
+      - Stretching limited engineering resources
+      - Building scalable AI capabilities from day one
+      - Rapid iteration based on user feedback
+      
+      **Decision Makers:**
+      - Founders (CEO, CTO)
+      - Technical Co-founders
+      - Lead Engineers
+      
+      **Success Indicators:**
+      - 50%+ faster deployment of AI capabilities
+      - Ability to compete with larger, resource-rich competitors
+      - Positive user feedback on AI features
+      
+      ## Disqualifying Characteristics
+      
+      Companies that are **not** a good fit for Sipacate typically have:
+      
+      - No clear AI strategy or use cases
+      - Significant budget constraints (<$10K annual software budget)
+      - Highly regulated environments requiring on-premises deployment only
+      - Limited technical resources to implement and maintain integrations
+      - No prior experience with SaaS tools
+      
+      ## Targeting Strategy
+      
+      For maximum effectiveness, Sipacate's go-to-market strategy should:
+      
+      1. **Prioritize Growth-Stage SaaS** for initial market penetration
+      2. **Target specific use cases** within Digital Transformation Enterprises
+      3. **Create special startup programs** for AI-Forward Startups with high growth potential
+      4. **Develop vertical-specific solutions** for high-value industries
+      5. **Leverage success stories** within each ICP to expand market presence
+    filename: ideal-customer-profile.md
+    fileType: markdown
+    createdAt: "2023-11-10T12:00:00.000Z"
+    updatedAt: "2023-11-10T12:00:00.000Z"
+  - id: file-004
+    assistantId: marketing-assistant-123
+    content: |
+      # Sipacate Brand Voice Guide
+
+      ## Brand Essence
+      
+      Sipacate is where **technical innovation meets practical simplicity**. Our brand voice reflects our commitment to making powerful AI capabilities accessible and actionable for businesses of all sizes.
+      
+      ## Core Brand Values
+      
+      - **Empowerment:** We enable customers to harness AI without specialized expertise
+      - **Clarity:** We make complex technology understandable and approachable
+      - **Innovation:** We push boundaries while keeping solutions practical
+      - **Reliability:** We build trust through consistent, dependable performance
+      - **Collaboration:** We believe the best AI solutions emerge from human-AI partnership
+      
+      ## Voice Characteristics
+      
+      ### 1. Knowledgeable but Accessible
+      
+      **Do:**
+      - Explain technical concepts in clear, relatable terms
+      - Use analogies to illustrate complex ideas
+      - Break down complicated processes into understandable steps
+      
+      **Don't:**
+      - Use unexplained jargon or acronyms
+      - Oversimplify to the point of inaccuracy
+      - Talk down to technically sophisticated audiences
+      
+      **Example:**
+      ✅ "Our template engine transforms lengthy prompt engineering into a simple drag-and-drop experience, while maintaining the power and flexibility that developers expect."
+      
+      ❌ "Our GUI-based LLM orchestration layer facilitates parallelized inference with retrieval augmentation capabilities."
+      
+      ### 2. Confident but Humble
+      
+      **Do:**
+      - Speak with authority about our strengths
+      - Acknowledge the challenges of AI implementation
+      - Be transparent about capabilities and limitations
+      
+      **Don't:**
+      - Make hyperbolic claims
+      - Present AI as magical or all-powerful
+      - Dismiss legitimate concerns about AI
+      
+      **Example:**
+      ✅ "Sipacate helps you build AI assistants that consistently deliver value, while giving you the controls to ensure they operate within your guidelines."
+      
+      ❌ "Our revolutionary AI platform will transform your business overnight with zero effort on your part."
+      
+      ### 3. Forward-Thinking but Practical
+      
+      **Do:**
+      - Connect innovation to tangible business outcomes
+      - Focus on real-world applications
+      - Balance vision with actionable steps
+      
+      **Don't:**
+      - Get lost in theoretical possibilities
+      - Ignore implementation challenges
+      - Over-promise future capabilities
+      
+      **Example:**
+      ✅ "While we're excited about the future of AI, we're focused on delivering tools that solve today's business problems while building a foundation for tomorrow's innovations."
+      
+      ❌ "Our groundbreaking technology represents a paradigm shift that will fundamentally reinvent how businesses operate in the coming singularity."
+      
+      ### 4. Conversational but Professional
+      
+      **Do:**
+      - Use direct, active language
+      - Adopt a friendly, approachable tone
+      - Vary sentence structure for natural flow
+      
+      **Don't:**
+      - Use overly casual language or slang
+      - Write in an academic or overly formal style
+      - Create dense, jargon-heavy paragraphs
+      
+      **Example:**
+      ✅ "Need to create an AI assistant quickly? Start with one of our templates, customize it to your needs, and deploy it in minutes."
+      
+      ❌ "The implementation of an artificial intelligence agent can be expedited through the utilization of our predefined configurations, which may be subsequently modified to align with specific requirements prior to deployment."
+      
+      ## Communication Guidelines by Channel
+      
+      ### Website
+      - Clear, benefit-focused headlines
+      - Scannable content with descriptive subheadings
+      - Balanced emphasis on capabilities and outcomes
+      - Strong calls-to-action that emphasize value
+      
+      ### Documentation
+      - Step-by-step instructions with visual aids
+      - Technical accuracy without unnecessary complexity
+      - Consistent terminology and clear examples
+      - Anticipation of common questions and challenges
+      
+      ### Social Media
+      - More conversational and engaging
+      - Focus on specific use cases and quick wins
+      - Highlight customer success stories
+      - Join relevant industry conversations
+      
+      ### Email
+      - Direct and concise communication
+      - Personalized when possible
+      - Clear value proposition and next steps
+      - Respect for recipient's time and attention
+      
+      ## Language Patterns
+      
+      ### Words to Embrace
+      - Streamline, simplify, accelerate
+      - Empower, enable, enhance
+      - Practical, powerful, proven
+      - Flexible, scalable, reliable
+      - Collaborative, partnership, ecosystem
+      
+      ### Words to Avoid
+      - Revolutionary, disruptive, cutting-edge
+      - Magic, genius, mind-blowing
+      - Complicated, complex, sophisticated (when describing user experience)
+      - Easy, simple, trivial (when describing significant processes)
+      - Perfect, flawless, 100% (overpromising)
+      
+      ## Brand Voice Evolution
+      
+      As Sipacate grows and the AI landscape evolves, our brand voice will naturally mature. We'll regularly review and refine this guide to ensure it continues to:
+      
+      - Reflect our evolving product capabilities
+      - Address the changing needs of our customers
+      - Differentiate us in an increasingly crowded market
+      - Maintain authenticity as we scale
+    filename: brand-voice-guide.md
+    fileType: markdown
+    createdAt: "2023-11-10T12:00:00.000Z"
+    updatedAt: "2023-11-10T12:00:00.000Z" 
