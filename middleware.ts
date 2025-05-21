@@ -1,7 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
+// import { auth } from "@/lib/auth"
+import { convexAuthNextjsMiddleware } from "@convex-dev/auth/nextjs/server";
 
 export const runtime = "edge"
+
+export default convexAuthNextjsMiddleware();
 
 export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname
