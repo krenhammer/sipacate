@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,50 +20,36 @@ interface DeleteFileDialogProps {
   onDelete: (filename: string) => void;
 }
 
-export function DeleteFileDialog({
-  children,
-  filename,
-  onDelete,
-}: DeleteFileDialogProps) {
-  const [open, setOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-
+export function DeleteFileDialog({ children, filename, onDelete }: DeleteFileDialogProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  
   const handleDelete = async () => {
-    setIsDeleting(true);
     try {
       onDelete(filename);
       toast.success(`File "${filename}" removed successfully`);
     } catch (error) {
       toast.error("Failed to remove file");
     } finally {
-      setIsDeleting(false);
-      setOpen(false);
+      setIsOpen(false);
     }
   };
-
+  
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild onClick={(e) => e.stopPropagation()}>
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+      <AlertDialogTrigger asChild>
         {children}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Remove File</AlertDialogTitle>
+          <AlertDialogTitle>Delete File</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to remove "{filename}"? This action cannot be undone.
+            Are you sure you want to delete &quot;{filename}&quot;? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={(e) => {
-              e.preventDefault();
-              handleDelete();
-            }}
-            disabled={isDeleting}
-            className="bg-destructive hover:bg-destructive/90"
-          >
-            {isDeleting ? "Removing..." : "Remove"}
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

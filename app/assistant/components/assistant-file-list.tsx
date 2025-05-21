@@ -12,9 +12,28 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { TiptapMarkdownEditor } from "@/app/plan/components/TiptapMarkdownEditor";
 import { toast } from "sonner";
 import { DeleteFileDialog } from "./delete-file-dialog";
+import dynamic from "next/dynamic";
+import { FallbackEditor } from "./fallback-editor";
+
+// Track if editor failed to load
+let editorLoadFailed = false;
+
+// Dynamically import the editor component with SSR disabled and error handling
+const TiptapMarkdownEditor = dynamic(
+  () => import("@/app/plan/components/TiptapMarkdownEditor")
+    .then(mod => ({ default: mod.TiptapMarkdownEditor }))
+    .catch(err => {
+      console.error("Failed to load TiptapMarkdownEditor:", err);
+      editorLoadFailed = true;
+      return { default: FallbackEditor };
+    }),
+  { 
+    ssr: false,
+    loading: () => <div className="p-4 text-center">Loading editor...</div>
+  }
+);
 
 interface FileItem {
   id?: string;
@@ -34,6 +53,7 @@ export function AssistantFileList({ files, onRemove, onUpdateContent }: Assistan
   const [editingFile, setEditingFile] = useState<FileItem | null>(null);
   const [fileContent, setFileContent] = useState<string>("");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editorError, setEditorError] = useState(false);
 
   const getFileIcon = (file: FileItem) => {
     const extension = file.filename.split('.').pop()?.toLowerCase();
@@ -136,43 +156,58 @@ export function AssistantFileList({ files, onRemove, onUpdateContent }: Assistan
         ))}
       </div>
 
-      <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
-          <DialogHeader className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2">
-              {editingFile && getFileIcon(editingFile)}
-              <span>Editing {editingFile?.filename}</span>
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsEditorOpen(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-auto min-h-[40vh]">
-            <TiptapMarkdownEditor 
-              content={fileContent} 
-              onChange={handleContentChange}
-              className="border rounded-md p-2 min-h-full"
-            />
-          </div>
-          
-          <div className="flex justify-end gap-2 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsEditorOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleSaveContent}>
-              Save Changes
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Only render the Dialog when it's open to avoid SSR issues */}
+      {isEditorOpen && (
+        <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+          <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
+            <DialogHeader className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2">
+                {editingFile && getFileIcon(editingFile)}
+                <span>Editing {editingFile?.filename}</span>
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsEditorOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogHeader>
+            
+            <div className="flex-1 overflow-auto min-h-[40vh]">
+              {typeof window !== 'undefined' && (
+                <>
+                  {editorLoadFailed ? (
+                    <FallbackEditor
+                      content={fileContent}
+                      onChange={handleContentChange}
+                      className="border rounded-md p-2 min-h-full"
+                    />
+                  ) : (
+                    <TiptapMarkdownEditor 
+                      content={fileContent} 
+                      onChange={handleContentChange}
+                      className="border rounded-md p-2 min-h-full"
+                    />
+                  )}
+                </>
+              )}
+            </div>
+            
+            <div className="flex justify-end gap-2 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsEditorOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleSaveContent}>
+                Save Changes
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 } 

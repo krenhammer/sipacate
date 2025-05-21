@@ -26,6 +26,7 @@ interface AssistantDialogProps {
 }
 
 export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
+  const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const { createAssistant, updateAssistant, isLoading } = useAssistants();
   const { 
@@ -43,6 +44,11 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
   const [description, setDescription] = useState(assistant?.description || "");
   const [instructions, setInstructions] = useState(assistant?.instructions || "");
   const [knowledge, setKnowledge] = useState(assistant?.knowledge || "");
+  
+  // Set mounted state to true after component mounts
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Initialize files if editing
   useEffect(() => {
@@ -110,94 +116,101 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
     }
   };
 
+  // Return only trigger if not mounted to avoid hydration issues
+  if (!mounted) {
+    return <>{children}</>;
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-2xl">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>{isEdit ? "Edit" : "Create"} Assistant</DialogTitle>
-            <DialogDescription>
-              {isEdit
-                ? "Update your AI assistant settings and knowledge."
-                : "Create a new AI assistant with customized knowledge."}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Name*</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="My Assistant"
-                required
-              />
-            </div>
+      {open && (
+        <DialogContent className="max-w-2xl">
+          <form onSubmit={handleSubmit}>
+            <DialogHeader>
+              <DialogTitle>{isEdit ? "Edit" : "Create"} Assistant</DialogTitle>
+              <DialogDescription>
+                {isEdit
+                  ? "Update your AI assistant settings and knowledge."
+                  : "Create a new AI assistant with customized knowledge."}
+              </DialogDescription>
+            </DialogHeader>
             
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                value={description || ""}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="A brief description of this assistant"
-              />
-            </div>
-            
-            <div className="grid gap-2">
-              <Label htmlFor="instructions">Instructions</Label>
-              <Textarea
-                id="instructions"
-                value={instructions || ""}
-                onChange={(e) => setInstructions(e.target.value)}
-                placeholder="Custom instructions for how the assistant should behave"
-                rows={3}
-              />
-            </div>
-            
-            <div className="grid gap-2">
-              <Label htmlFor="knowledge">Knowledge</Label>
-              <Textarea
-                id="knowledge"
-                value={knowledge || ""}
-                onChange={(e) => setKnowledge(e.target.value)}
-                placeholder="Specialized knowledge for the assistant"
-                rows={3}
-              />
-            </div>
-            
-            <div className="grid gap-2">
-              <div className="flex justify-between items-center">
-                <Label>Knowledge Files</Label>
-                <AssistantFileUpload onUpload={handleFileUpload} isLoading={isFileLoading} error={fileError} />
-              </div>
-              <div className="border rounded-lg p-3 bg-muted/30">
-                <AssistantFileList 
-                  files={files} 
-                  onRemove={removeFile} 
-                  onUpdateContent={updateFileContent}
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Name*</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="My Assistant"
+                  required
                 />
               </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  value={description || ""}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="A brief description of this assistant"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="instructions">Instructions</Label>
+                <Textarea
+                  id="instructions"
+                  value={instructions || ""}
+                  onChange={(e) => setInstructions(e.target.value)}
+                  placeholder="Custom instructions for how the assistant should behave"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="knowledge">Knowledge</Label>
+                <Textarea
+                  id="knowledge"
+                  value={knowledge || ""}
+                  onChange={(e) => setKnowledge(e.target.value)}
+                  placeholder="Specialized knowledge for the assistant"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <div className="flex justify-between items-center">
+                  <Label>Knowledge Files</Label>
+                  <AssistantFileUpload onUpload={handleFileUpload} isLoading={isFileLoading} error={fileError} />
+                </div>
+                <div className="border rounded-lg p-3 bg-muted/30">
+                  <AssistantFileList 
+                    files={files} 
+                    onRemove={removeFile} 
+                    onUpdateContent={updateFileContent}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <DialogFooter>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => setOpen(false)}
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : isEdit ? "Update" : "Create"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
+            
+            <DialogFooter>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setOpen(false)}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? "Saving..." : isEdit ? "Update" : "Create"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      )}
     </Dialog>
   );
 } 
