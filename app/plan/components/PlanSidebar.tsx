@@ -21,6 +21,12 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { planTemplateState } from "@/app/plan-template/store/planTemplateState"
 import { planState } from "../store/planState"
 import { NodeComponent } from "./NodeComponent"
@@ -96,16 +102,25 @@ export function PlanSidebar() {
         <SidebarContent className="mt-20 mx-2 h-full">
           {/* Current Plan Template Button */}
           {selectedTemplate && (
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start mb-2 text-sm"
-              asChild
-            >
-              <Link href={`/plan-template/${selectedTemplate.id}`}>
-                <FileText className="h-4 w-4 mr-2" />
-                {selectedTemplate.title}
-              </Link>
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start mb-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    asChild
+                  >
+                    <Link href={`/plan-template/${selectedTemplate.id}`}>
+                      <FileText className="h-4 w-4 mr-2" />
+                      {selectedTemplate.title}
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Plan Template: {selectedTemplate.title}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full">
