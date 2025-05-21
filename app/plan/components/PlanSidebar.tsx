@@ -21,7 +21,6 @@ import {
 import { planTemplateState } from "@/app/plan-template/store/planTemplateState"
 import { planState } from "../store/planState"
 import { TreeView, TreeDataItem } from "@/components/tree-view"
-import { cn } from "@/lib/utils"
 import { Step } from "../types"
 
 // Safety method to fix typing issues with Valtio proxies
@@ -78,14 +77,21 @@ export function PlanSidebar() {
       // Check if this is a parent node
       const isParent = node.children && node.children.length > 0;
       
-      // For parent nodes, capture the counts
-      let withContent = 0;
-      let total = 0;
+      // For parent nodes, add child counts to the name
+      let displayName = node.name;
       
       if (isParent) {
-        const counts = countChildren(node);
-        withContent = counts.withContent;
-        total = counts.total;
+        const { withContent, total } = countChildren(node);
+        
+        // Only add counter if there are children
+        if (total > 0) {
+          // Add counter with a styled span
+          displayName = (
+            <>
+              {node.name} <span className="text-xs opacity-60 text-muted-foreground font-normal">({withContent}/{total})</span>
+            </>
+          );
+        }
       }
       
       // Dim leaf nodes without content
@@ -93,13 +99,9 @@ export function PlanSidebar() {
       
       return {
         id: node.id,
-        name: node.name,
+        name: displayName,
         disabled: shouldDim,
-        children: node.children?.map(mapNode),
-        // Add extra attributes for styling
-        isParent,
-        withContent,
-        total
+        children: node.children?.map(mapNode)
       };
     };
     
@@ -193,15 +195,6 @@ export function PlanSidebar() {
           font-weight: bold;
           background-color: var(--accent);
           color: var(--accent-foreground);
-        }
-        
-        /* Add the counter to parent nodes */
-        .custom-tree-view [data-parent="true"] > [aria-level] > div::after {
-          content: " (" attr(data-with-content) "/" attr(data-total) ")";
-          font-size: 0.75rem;
-          opacity: 0.6;
-          color: var(--muted-foreground);
-          font-weight: normal;
         }
       `}</style>
     </div>
