@@ -79,9 +79,11 @@ export function PlanSidebar() {
       
       // For parent nodes, add child counts to the name
       let displayName = node.name;
+      let childrenStats = { withContent: 0, total: 0 };
       
       if (isParent) {
-        const { withContent, total } = countChildren(node);
+        childrenStats = countChildren(node);
+        const { withContent, total } = childrenStats;
         
         // Only add counter if there are children
         if (total > 0) {
@@ -94,8 +96,8 @@ export function PlanSidebar() {
         }
       }
       
-      // Dim leaf nodes without content
-      const shouldDim = !hasContent && !isSelected && !isParent;
+      // Dim leaf nodes without content or parent nodes with 0 content children
+      const shouldDim = (!hasContent && !isParent) || (isParent && childrenStats.withContent === 0 && !isSelected);
       
       return {
         id: node.id,
@@ -160,7 +162,7 @@ export function PlanSidebar() {
           
           <TreeView 
             data={treeData}
-            className="h-full custom-tree-view"
+            className="h-full text-sm"
             onSelectChange={handleSelectChange}
             expandAll={false}
             initialSelectedItemId={selectedNode?.id}
@@ -179,24 +181,6 @@ export function PlanSidebar() {
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      
-      {/* Add custom CSS for the tree view */}
-      <style jsx global>{`
-        .custom-tree-view {
-          font-size: 0.875rem; /* 14px */
-        }
-        
-        .custom-tree-view [data-disabled="true"] {
-          opacity: 0.5;
-          color: var(--gray-400);
-        }
-        
-        .custom-tree-view [data-state="active"] {
-          font-weight: bold;
-          background-color: var(--accent);
-          color: var(--accent-foreground);
-        }
-      `}</style>
     </div>
   )
 } 

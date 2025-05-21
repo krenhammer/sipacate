@@ -271,7 +271,8 @@ const TreeNode = ({
                     className={cn(
                         treeVariants(),
                         selectedItemId === item.id && selectedTreeVariants(),
-                        isDragOver && dragOverVariants()
+                        isDragOver && dragOverVariants(),
+                        item.disabled && 'opacity-50 cursor-not-allowed text-muted-foreground'
                     )}
                     onClick={() => {
                         handleSelectChange(item)
