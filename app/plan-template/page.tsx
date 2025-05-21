@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePlanTemplates } from "./hooks/usePlanTemplates";
 import { PlanTemplate } from "./types";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import Link from "next/link";
 import { YamlExportButton, YamlImportButton } from "./components/yaml-export-import";
 import { planTemplateState } from "./store/planTemplateState";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Schema for template form
 const templateFormSchema = z.object({
@@ -30,6 +31,8 @@ const templateFormSchema = z.object({
 type TemplateFormData = z.infer<typeof templateFormSchema>;
 
 export default function PlanTemplatePage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { templates, loading, createTemplate, updateTemplate, deleteTemplate } = usePlanTemplates();
   const [editingTemplate, setEditingTemplate] = useState<PlanTemplate | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -45,6 +48,30 @@ export default function PlanTemplatePage() {
     },
   });
 
+  // Check URL for edit parameter on mount
+  useEffect(() => {
+    const editId = searchParams.get('editTemplate');
+    if (editId && templates.length > 0) {
+      const template = templates.find(t => t.id === editId);
+      if (template) {
+        handleOpenEditDialog(template);
+      }
+    }
+  }, [searchParams, templates]);
+
+  // Check URL for selected template on mount
+  useEffect(() => {
+    if (templates.length > 0) {
+      const selectedId = searchParams.get('selectedTemplate');
+      if (selectedId) {
+        const template = templates.find(t => t.id === selectedId);
+        if (template && (!planTemplateState.selectedTemplate || planTemplateState.selectedTemplate.id !== selectedId)) {
+          planTemplateState.selectTemplate(template);
+        }
+      }
+    }
+  }, [searchParams, templates]);
+
   // Reset form when opening create dialog
   const handleOpenCreateDialog = () => {
     form.reset({ title: "", description: "" });
@@ -59,6 +86,11 @@ export default function PlanTemplatePage() {
       description: template.description || "",
     });
     setShowEditDialog(true);
+    
+    // Update URL with template ID
+    const url = new URL(window.location.href);
+    url.searchParams.set('editTemplate', template.id);
+    router.replace(url.pathname + url.search);
   };
 
   // Handle form submission
@@ -67,7 +99,7 @@ export default function PlanTemplatePage() {
       if (editingTemplate) {
         // Update existing template
         await updateTemplate(editingTemplate.id, data.title, data.description);
-        setShowEditDialog(false);
+        handleCloseEditDialog();
       } else {
         // Create new template
         await createTemplate(data.title, data.description);
@@ -75,6 +107,19 @@ export default function PlanTemplatePage() {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
+    }
+  };
+
+  // Close edit dialog and update URL
+  const handleCloseEditDialog = () => {
+    setShowEditDialog(false);
+    setEditingTemplate(null);
+    
+    // Remove template ID from URL
+    if (searchParams.has('editTemplate')) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('editTemplate');
+      router.replace(url.pathname + url.search);
     }
   };
 
@@ -260,7 +305,7 @@ export default function PlanTemplatePage() {
       </Dialog>
 
       {/* Edit Template Dialog */}
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+      <Dialog open={showEditDialog} onOpenChange={(open) => !open && handleCloseEditDialog()}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Template</DialogTitle>

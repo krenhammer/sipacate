@@ -19,6 +19,7 @@ import { Assistant } from "../store";
 import { toast } from "sonner";
 import { AssistantFileUpload } from "./assistant-file-upload";
 import { AssistantFileList } from "./assistant-file-list";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface AssistantDialogProps {
   children: ReactNode;
@@ -26,6 +27,8 @@ interface AssistantDialogProps {
 }
 
 export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const { createAssistant, updateAssistant, isLoading } = useAssistants();
@@ -49,6 +52,16 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
+  
+  // Check URL for edit parameter on mount
+  useEffect(() => {
+    if (mounted && assistant) {
+      const editId = searchParams.get('editAssistant');
+      if (editId === assistant.id) {
+        setOpen(true);
+      }
+    }
+  }, [mounted, assistant, searchParams]);
   
   // Initialize files if editing
   useEffect(() => {
@@ -101,6 +114,12 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
       
       resetForm();
       setOpen(false);
+      // Remove the URL parameter when closing
+      if (searchParams.has('editAssistant')) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('editAssistant');
+        router.replace(url.pathname + url.search);
+      }
     } catch (error) {
       toast.error(`Failed to ${isEdit ? "update" : "create"} assistant`);
     }
@@ -116,13 +135,30 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
     }
   };
 
+  // Update URL when dialog opens/closes
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    
+    if (newOpen && assistant) {
+      // Add assistant ID to URL when opening dialog
+      const url = new URL(window.location.href);
+      url.searchParams.set('editAssistant', assistant.id);
+      router.replace(url.pathname + url.search);
+    } else if (!newOpen && searchParams.has('editAssistant')) {
+      // Remove from URL when closing
+      const url = new URL(window.location.href);
+      url.searchParams.delete('editAssistant');
+      router.replace(url.pathname + url.search);
+    }
+  };
+
   // Return only trigger if not mounted to avoid hydration issues
   if (!mounted) {
     return <>{children}</>;
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       {open && (
         <DialogContent className="max-w-2xl">
@@ -199,7 +235,7 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
               <Button 
                 type="button" 
                 variant="outline" 
-                onClick={() => setOpen(false)}
+                onClick={() => handleOpenChange(false)}
                 disabled={isLoading}
               >
                 Cancel

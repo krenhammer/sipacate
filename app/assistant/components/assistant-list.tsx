@@ -10,13 +10,37 @@ import { DeleteAssistantDialog } from "./delete-assistant-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { YamlExportButton } from "./yaml-export-import";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function AssistantList() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { assistants, isLoading, error, fetchAssistants, selectedAssistant, selectAssistant } = useAssistants();
 
   useEffect(() => {
     fetchAssistants();
   }, [fetchAssistants]);
+
+  // Check URL for selected assistant on mount
+  useEffect(() => {
+    const selectedId = searchParams.get('selectedAssistant');
+    if (selectedId && assistants.length > 0) {
+      const assistant = assistants.find(a => a.id === selectedId);
+      if (assistant && (!selectedAssistant || selectedAssistant.id !== selectedId)) {
+        selectAssistant(assistant);
+      }
+    }
+  }, [searchParams, assistants, selectedAssistant, selectAssistant]);
+
+  // Handle assistant selection with URL update
+  const handleSelectAssistant = (assistant) => {
+    selectAssistant(assistant);
+    
+    // Update URL with selected assistant ID
+    const url = new URL(window.location.href);
+    url.searchParams.set('selectedAssistant', assistant.id);
+    router.replace(url.pathname + url.search);
+  };
 
   if (isLoading) {
     return <AssistantListSkeleton />;
@@ -66,7 +90,7 @@ export function AssistantList() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => selectAssistant(assistant)}
+                      onClick={() => handleSelectAssistant(assistant)}
                     >
                       <CheckIcon className="h-4 w-4 mr-2" />
                       {selectedAssistant?.id === assistant.id ? "Selected" : "Select"}
