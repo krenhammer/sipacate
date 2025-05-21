@@ -1,20 +1,11 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState } from "react"
 import { useSnapshot } from "valtio"
-import { ChevronLeft, ChevronRight, Clock, Layers, FileText } from "lucide-react"
-import { Tree } from "react-arborist"
+import { FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -29,76 +20,118 @@ import {
 } from "@/components/ui/tooltip"
 import { planTemplateState } from "@/app/plan-template/store/planTemplateState"
 import { planState } from "../store/planState"
-import { NodeComponent } from "./NodeComponent"
+import { TreeView, TreeDataItem } from "@/components/tree-view"
+import { cn } from "@/lib/utils"
+import { Step } from "../types"
 
-// Define the type for the tree ref
-type TreeRef = {
-  isOpen: (id: string) => boolean;
-  close: (id: string) => void;
-  toggle: (id: string) => void;
-};
+// Safety method to fix typing issues with Valtio proxies
+const asAny = <T,>(value: T): any => value as any;
 
 export function PlanSidebar() {
-  const { steps, sidebarCollapsed } = useSnapshot(planState)
+  const { steps, sidebarCollapsed, selectedNode } = useSnapshot(planState)
   const { selectedTemplate } = useSnapshot(planTemplateState)
-  const [activeTab, setActiveTab] = useState<string>("steps")
-  const treeRef = useRef<TreeRef>(null)
-  const [lastOpenId, setLastOpenId] = useState<string | null>(null)
-
-  // Custom handler for toggling nodes
-  const handleToggle = (id: string) => {
-    if (!treeRef.current) return
-
-    const tree = treeRef.current
-    
-    // Check if the node is already open
-    const isCurrentlyOpen = tree.isOpen(id)
-    
-    // If we're opening a node, close the previously open one first
-    if (!isCurrentlyOpen && lastOpenId && lastOpenId !== id) {
-      tree.close(lastOpenId)
+  
+  // Function to check if a node has content
+  const hasNodeContent = (node: any): boolean => {
+    return node.type === 'step' && Boolean(node.data.result);
+  };
+  
+  // Function to count children with content and total children (recursively)
+  const countChildren = (node: any): { withContent: number, total: number } => {
+    if (!node.children || node.children.length === 0) {
+      return { withContent: 0, total: 0 };
     }
     
-    // Toggle the clicked node
-    tree.toggle(id)
+    let withContent = 0;
+    let total = 0;
     
-    // Update the last open ID if we just opened a node
-    if (!isCurrentlyOpen) {
-      setLastOpenId(id)
-    } else if (id === lastOpenId) {
-      setLastOpenId(null)
+    // Count direct children first
+    for (const child of node.children) {
+      total++;
+      
+      // Check if this child has content
+      if (hasNodeContent(child)) {
+        withContent++;
+      }
+      
+      // Recursively count for nested children
+      if (child.children && child.children.length > 0) {
+        const { withContent: childWithContent, total: childTotal } = countChildren(child);
+        withContent += childWithContent;
+        total += childTotal;
+      }
     }
-  }
+    
+    return { withContent, total };
+  };
+  
+  // Transform the steps data to match TreeDataItem format
+  const treeData = React.useMemo(() => {
+    // Create a mapping function that handles nested structure
+    const mapNode = (node: any): TreeDataItem => {
+      // Check if this node has content
+      const hasContent = hasNodeContent(node);
+      
+      // Node is selected
+      const isSelected = selectedNode?.id === node.id;
+      
+      // Check if this is a parent node
+      const isParent = node.children && node.children.length > 0;
+      
+      // For parent nodes, capture the counts
+      let withContent = 0;
+      let total = 0;
+      
+      if (isParent) {
+        const counts = countChildren(node);
+        withContent = counts.withContent;
+        total = counts.total;
+      }
+      
+      // Dim leaf nodes without content
+      const shouldDim = !hasContent && !isSelected && !isParent;
+      
+      return {
+        id: node.id,
+        name: node.name,
+        disabled: shouldDim,
+        children: node.children?.map(mapNode),
+        // Add extra attributes for styling
+        isParent,
+        withContent,
+        total
+      };
+    };
+    
+    return asAny(steps).map(mapNode);
+  }, [steps, selectedNode]);
+
+  // Handle tree item selection
+  const handleSelectChange = (item: TreeDataItem | undefined) => {
+    if (item) {
+      // Find the corresponding step
+      const findNode = (items: any[], id: string): any => {
+        for (const item of items) {
+          if (item.id === id) return item;
+          if (item.children) {
+            const found = findNode(item.children, id);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+      
+      const selected = findNode(asAny(steps), item.id);
+      if (selected) {
+        planState.selectedNode = selected;
+        console.log("Selected:", selected.name);
+      }
+    }
+  };
 
   return (
     <div className={`border-r transition-all ${sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-64'} h-full`}>
-      <Sidebar className="h-full">
-        {/* <SidebarHeader className="mt-20">
-          <SidebarMenu>
-            <SidebarMenuItem className="flex justify-between items-center w-full">
-              <SidebarMenuButton size="lg" asChild>
-                <button>
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <Layers className="size-4" />
-                  </div>
-                  <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-semibold">VoltAgent Planner</span>
-                  </div>
-                </button>
-              </SidebarMenuButton>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => planState.sidebarCollapsed = !sidebarCollapsed}
-                className="ml-auto"
-              >
-                {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-              </Button>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader> */}
-        
+      <Sidebar className="h-full">        
         <SidebarContent className="mt-20 mx-2 h-full">
           {/* Current Plan Template Button */}
           {selectedTemplate && (
@@ -116,65 +149,20 @@ export function PlanSidebar() {
                     </Link>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent side="right">
                   <p>Plan Template: {selectedTemplate.title}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           )}
           
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="steps">
-                <Layers className="h-4 w-4 mr-2" />
-                Steps
-              </TabsTrigger>
-              <TabsTrigger value="history">
-                <Clock className="h-4 w-4 mr-2" />
-                History
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="steps" className="mt-2">
-              <ScrollArea className="h-full">
-                <Tree
-                  ref={treeRef}
-                  data={steps}
-                  openByDefault={false}
-                  width="100%"
-                  indent={16}
-                  rowHeight={28}
-                  paddingTop={10}
-                  paddingBottom={10}
-                  className="w-full"
-                  onToggle={handleToggle}
-                >
-                  {NodeComponent}
-                </Tree>
-              </ScrollArea>
-            </TabsContent>
-            
-            <TabsContent value="history" className="mt-2 h-full">
-              <ScrollArea className="h-full">
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-4 pb-2 border-b">
-                    <Clock className="h-4 w-4" />
-                    <span className="text-sm">Today</span>
-                  </div>
-                  <div className="space-y-2">
-                    {steps.map((step) => (
-                      <div key={step.id} className="p-2 hover:bg-muted rounded-sm cursor-pointer">
-                        <p className="text-sm font-medium">{step.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          Last updated: {new Date(step.data.updated).toLocaleString()}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
+          <TreeView 
+            data={treeData}
+            className="h-full custom-tree-view"
+            onSelectChange={handleSelectChange}
+            expandAll={false}
+            initialSelectedItemId={selectedNode?.id}
+          />
         </SidebarContent>
         
         <SidebarRail />
@@ -189,6 +177,33 @@ export function PlanSidebar() {
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
+      
+      {/* Add custom CSS for the tree view */}
+      <style jsx global>{`
+        .custom-tree-view {
+          font-size: 0.875rem; /* 14px */
+        }
+        
+        .custom-tree-view [data-disabled="true"] {
+          opacity: 0.5;
+          color: var(--gray-400);
+        }
+        
+        .custom-tree-view [data-state="active"] {
+          font-weight: bold;
+          background-color: var(--accent);
+          color: var(--accent-foreground);
+        }
+        
+        /* Add the counter to parent nodes */
+        .custom-tree-view [data-parent="true"] > [aria-level] > div::after {
+          content: " (" attr(data-with-content) "/" attr(data-total) ")";
+          font-size: 0.75rem;
+          opacity: 0.6;
+          color: var(--muted-foreground);
+          font-weight: normal;
+        }
+      `}</style>
     </div>
   )
 } 
