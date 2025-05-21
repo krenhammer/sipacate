@@ -43,7 +43,7 @@ export function YamlImportButton() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { createAssistant } = useAssistants();
+  const { createAssistant, fetchAssistants } = useAssistants();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -111,6 +111,8 @@ export function YamlImportButton() {
       }
       
       toast.success('Assistant imported successfully');
+      // Refresh the assistants list
+      await fetchAssistants();
       setIsDialogOpen(false);
       setFileName(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
