@@ -63,7 +63,7 @@ export function AssistantDialog({ children, assistant }: AssistantDialogProps) {
           filename: file.filename,
           content: file.content,
           fileType: file.fileType,
-          size: file.size || 0,
+          size: file.content ? file.content.length : 0, // Calculate size from content length
           type: file.fileType
         };
         addFile(fileData);

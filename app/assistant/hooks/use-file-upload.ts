@@ -8,6 +8,7 @@ export function useFileUpload() {
   const [error, setError] = useState<string | null>(null);
 
   const addFile = useCallback((file: FileUpload) => {
+    console.log("Adding file with size:", file.filename, file.content?.length, file.size);
     setFiles(prev => [...prev, file]);
   }, []);
 

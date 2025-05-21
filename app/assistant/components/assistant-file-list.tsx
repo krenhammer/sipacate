@@ -54,6 +54,12 @@ export function AssistantFileList({ files, onRemove, onUpdateContent }: Assistan
   const [fileContent, setFileContent] = useState<string>("");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editorError, setEditorError] = useState(false);
+  
+  console.log("Files in AssistantFileList:", JSON.stringify(files.map(f => ({ 
+    filename: f.filename, 
+    content_length: f.content?.length || 0,
+    size: f.size 
+  })), null, 2));
 
   const getFileIcon = (file: FileItem) => {
     const extension = file.filename.split('.').pop()?.toLowerCase();
@@ -68,6 +74,8 @@ export function AssistantFileList({ files, onRemove, onUpdateContent }: Assistan
   };
 
   const formatFileSize = (bytes: number) => {
+    console.log("Formatting file size:", bytes);
+    if (bytes === 0) return "0 bytes";
     if (bytes < 1024) return bytes + ' bytes';
     if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / 1048576).toFixed(1) + ' MB';
