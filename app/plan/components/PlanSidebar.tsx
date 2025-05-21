@@ -25,11 +25,18 @@ import { planTemplateState } from "@/app/plan-template/store/planTemplateState"
 import { planState } from "../store/planState"
 import { NodeComponent } from "./NodeComponent"
 
+// Define the type for the tree ref
+type TreeRef = {
+  isOpen: (id: string) => boolean;
+  close: (id: string) => void;
+  toggle: (id: string) => void;
+};
+
 export function PlanSidebar() {
   const { steps, sidebarCollapsed } = useSnapshot(planState)
   const { selectedTemplate } = useSnapshot(planTemplateState)
   const [activeTab, setActiveTab] = useState<string>("steps")
-  const treeRef = useRef(null)
+  const treeRef = useRef<TreeRef>(null)
   const [lastOpenId, setLastOpenId] = useState<string | null>(null)
 
   // Custom handler for toggling nodes
